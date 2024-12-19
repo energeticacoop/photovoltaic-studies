@@ -361,6 +361,30 @@ function get05FolderTemplates() {
 }
 
 /**
+ * Retrieves templates for shared installations.
+ * @returns {Array} Array of templates for shared installations.
+ */
+function getSharedTemplates() {
+  return [
+    {
+      templateName: "Estudio para instalación autoconsumo compartido",
+      templateId: "1BJOQIriXkyzu1gWUxJBv9yhwKQ9OdVZxgZJRoaxyaE8",
+      exportToPDF: false,
+      copyComments: true,
+      folder: "folder01"
+    },
+    {
+      templateName: "Estudio ahorro energético CEL",
+      templateId: "1SG2LSz9Hh-ds9R8RFUYhRjyx-KWhmjqyUzFea5kqIbI",
+      exportToPDF: false,
+      copyComments: true,
+      folder: "folder01"
+    },
+  ]
+}
+
+
+/**
  * Retrieves templates for Testing Document.
  * @returns {Array} Array of templates for Testing Document.
  */

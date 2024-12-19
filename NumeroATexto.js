@@ -149,7 +149,7 @@ function Millones(num) {
   return strMillones + " " + strMiles;
 }//Millones()
 
-function INVERSIONENTEXTO(num) {
+function CUANTIAENTEXTO(num) {
   var data = {
     numero: num,
     enteros: Math.floor(num),

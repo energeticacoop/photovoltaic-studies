@@ -2,53 +2,52 @@
  * Creates the final study documents.
  */
 function createFinalStudy() {
-  createDocuments(getFinalStudyTemplates(), "outputStudy")
+  createDocuments("outputStudy")
 }
 
 /**
  * Creates the documentation for the 00 folder.
  */
 function create00FolderDocumentation() {
-  createDocuments(get00FolderTemplates(), "output00Folder")
+  createDocuments("output00Folder")
 }
 
 /**
  * Creates the documentation for the 01 folder.
  */
 function create01FolderDocumentation() {
-  createDocuments(get01FolderTemplates(), "output01Folder")
+  createDocuments("output01Folder")
 }
 
 /**
  * Creates the memory or project and guide documents.
  */
 function createMemoryOrProjectAndGuide() {
-  const ui = SpreadsheetApp.getUi()
   const label = getValue("withProjectLabel")
   if (getValue("withproject")) {
-    ui.alert(`La casilla "${label}" de la pestaña "Documentación" está marcada. Se generará proyecto de instalación.`)
-    createDocuments(getProjectTemplates(), "outputMemoryOrProject")
+    Tools.showMessage("Generación de documentación", `La casilla "${label}" de la pestaña "Documentación" está marcada. Se generará proyecto de instalación.`)
+    createDocuments("outputProject")
   } else {
-    ui.alert(`La casilla "${label}" de la pestaña "Documentación" no está marcada. Se generará memoria técnica de instalación.`)
-    createDocuments(getMemoryTemplates(), "outputMemoryOrProject")
+    Tools.showMessage("Generación de documentación", `La casilla "${label}" de la pestaña "Documentación" no está marcada. Se generará memoria técnica de instalación.`)
+    createDocuments("outputMemory")    
   }
 
-  createDocuments(getGuideTemplates(), "outputGuide")
+  createDocuments("outputGuide")
 }
 
 /**
  * Creates the bill document.
  */
 function createBill() {
-  createDocuments(getBillTemplates(), "outputBill")
+  createDocuments("outputBill")
 }
 
 /**
  * Creates the documentation for the 02 and 03 folders.
  */
 function create02And03FolderDocumentation() {
-  createDocuments(get02FolderTemplates(), "output02Folder")
-  createDocuments(get03FolderTemplates(), "output03Folder")
+  createDocuments("output02Folder")
+  createDocuments("output03Folder")
 }
 
 /**
@@ -56,11 +55,10 @@ function create02And03FolderDocumentation() {
  */
 function create04FolderDocumentation() {
   if (getValue("withproject")) {
-    createDocuments(get04FolderTemplates(), "output04Folder")
+    createDocuments("output04Folder")
   } else {
-    const ui = SpreadsheetApp.getUi()
     const label = getValue("withProjectLabel")
-    ui.alert(`La casilla "${label}" de la pestaña "Documentación" no está marcada. No se generará ningún documento.`)
+    Tools.showMessage("Generación de documentación", SpreadsheetApp.getUi().alert(`La casilla "${label}" de la pestaña "Documentación" no está marcada. No se generará ningún documento.`))
   }
 }
 
@@ -68,39 +66,64 @@ function create04FolderDocumentation() {
  * Creates the documentation for the 05 folder.
  */
 function create05FolderDocumentation() {
-  createDocuments(get05FolderTemplates(), "output05Folder")
+  createDocuments("output05Folder")
 }
 
 /**
- * Creates all documents.
+ * Creates all documents for individual installations.
  */
 function createAllDocuments() {
   createFinalStudy()
   create00FolderDocumentation()
   create01FolderDocumentation()
   createMemoryOrProjectAndGuide()
+  createBill()
   create02And03FolderDocumentation()
   create04FolderDocumentation()
   create05FolderDocumentation()
 }
 
+
+/**
+ * Creates the documentation for shared installations
+ */
+function createSharedStudy() {
+  createDocuments("outputSharedStudy")
+}
+
+/**
+ * Creates the documentation for custom shared installations
+ */
+function createCustomSharedStudy() {
+  createDocuments("outputSharedCustomStudy")
+}
+
+/**
+ * Creates the savings documentation for shared installations
+ */
+function createSavingsSharedStudy() {
+  createDocuments("outputSharedSavingsStudy")
+}
+
+
 /**
  * Creates a test document.
  */
 function createTestDocument() {
-  createDocuments(getTestTemplates(), "test")
+  createDocuments("test")
 }
 
 /**
  * Creates documents from templates.
- * @param {Object[]} templates - Array of templates.
- * @param {string} outputRangeName - Name of the output range.
+ * @param {string} outputNamedRange - Name of the output range.
  */
-function createDocuments(templates, outputRangeName) {
+function createDocuments(outputNamedRange) {
 
+  const templates = createTemplatesArray(outputNamedRange)
+  
   // Clear output range
-  const outputRange = getRangeByName(outputRangeName)
-  clearRange(outputRangeName)
+  const outputRange = getRangeByName(outputNamedRange)
+  clearRange(outputNamedRange)
 
   // Replace values in all templates
   templates.forEach((template, templateIndex) => {
@@ -112,7 +135,7 @@ function createDocuments(templates, outputRangeName) {
     setURL(
       SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación").getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()),
       copy.getUrl(),
-      template.templateName
+      template.filename
     )
     SpreadsheetApp.flush()
   })
@@ -130,10 +153,11 @@ function createDocumentFromTemplate(template) {
 
   // Get template values
   const destinationFolder = getDestinationFolder(template.folder)
-  const filename = `${getValue("Nombre")} ${getValue("Apellidos")} - ${template.templateName}`
+  const filename = template.filename
   const templateId = template.templateId
   const exportToPDF = template.exportToPDF
   const copyComments = template.copyComments
+  const templateType = templateType
 
   // Remove all matching files on destination folder to avoid duplicates
   Tools.deleteFile(filename, destinationFolder)
@@ -213,6 +237,9 @@ function createDocumentFromTemplate(template) {
     if (templateId == "1xttGTW5xY0mnyuCEU8gEQwQ926WH4vTG0mZS4CEKuJQ") createBillAdditionalContents(doc)
     if (templateId == "13ldY9Q8bK7ijZSauJYD2piVbyYfYKtTPjf7qdhWTE6k") createFinalStudyAdditionalContents(doc)
     if (templateId == "1k9lYTmxMsINC6U49w1NWOu0-3dGkYUBF5yrhKmkGb04") createInstallationGuideAdditionalContents(doc)
+    if (templateId == "1SG2LSz9Hh-ds9R8RFUYhRjyx-KWhmjqyUzFea5kqIbI") createCELwithQuotaAdditionalContents(doc)
+    if (templateId == "1BJOQIriXkyzu1gWUxJBv9yhwKQ9OdVZxgZJRoaxyaE8") createCELstudy(doc)
+    if (templateId == "1Z99ZLph56eCyNmbsGeqXk9CmcIHGXgEYOspGgAxxs3M") createCELstudy(doc)
 
     doc.saveAndClose()
 

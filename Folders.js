@@ -61,7 +61,6 @@ function forgetFolders() {
     "folder0204",
     "folder0205",
     "folder03",
-    "helpscoutEmail",
     "outputMGE",
   ]
 

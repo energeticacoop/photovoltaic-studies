@@ -4,30 +4,30 @@
 function onOpen() {
   const ui = SpreadsheetApp.getUi()
   ui
-    .createMenu("🎛️ Producción y consumo")
-    .addItem("🌤️ Obtener ficheros para SAM", "processSAMdata")
+    .createMenu("🌤️ Producción")
+    .addItem("🌤️ Obtener ficheros de clima para SAM", "getClimateFile")
+    .addItem("🛰️ Obtener imágenes de satélite", "getSatelliteImages")
+    .addItem("🗺️ Calcular coordenadas UTM", "getUTMcoordinates")
+    .addItem("📌 Obtener código postal", "getPostalCode")
     .addSeparator()
-    .addSeparator()
-    .addItem(
-      "🔌 Procesar producción y consumos convencionales",
-      "processConventionalConsumptionAndProduction"
-    )
-    .addItem("⏱️ Procesar consumos recurrentes", "processRecurringConsumption")
-    .addItem("♨️ Simular consumos aerotermia", "processASHP")
-    .addItem("🚘 Simular consumos vehículo eléctrico", "processSAVE")
-    .addSeparator()
-    .addItem("⏬ Procesar producción y todos los consumos", "processAllConsumptions")
+    .addItem("⏬ Procesar todas las acciones de producción", "processSAMdata")
     .addToUi()
 
   ui
-    .createMenu("👩‍💻 Dimensionado e ingeniería")
-    .addItem("📋 Generar presupuesto tipo", "populateBudget")
+    .createMenu("🔌 Consumo")
+    .addItem("💡 Procesar consumos convencionales", "processConventionalConsumption")
+    .addItem("⏱️ Procesar consumos recurrentes", "processRecurringConsumption")
+    .addItem("♨️ Simular consumos aerotermia", "processASHPConsumptions")
+    .addItem("🚘 Simular consumos vehículo eléctrico", "processSAVEConsumption")
     .addSeparator()
+    .addItem("⏬ Procesar todos los consumos", "processAllConsumptions")
+    .addToUi()
+
+  ui
+    .createMenu("👩‍💻 Ingeniería")
+    .addItem("📋 Cargar presupuesto tipo", "populateBudget")
     .addSeparator()
-    .addItem("🔋 Calcular flujos energéticos", "processEnergyFlows")
-    .addItem("💶 Calcular flujos económicos", "processEconomicFlows")
-    .addSeparator()
-    .addItem("⏬ Calcular todos los flujos", "processAllFlows")
+    .addItem("🐝 Procesar Flux Solar", "processFluxSolar")
     .addToUi()
 
   ui
@@ -42,17 +42,19 @@ function onOpen() {
     .addItem("📙 Generar BOEL y registro autoconsumo", "create02And03FolderDocumentation")
     .addItem("📙 Generar documentación proyecto", "create04FolderDocumentation")
     .addItem("📙 Generar documentación distribuidora", "create05FolderDocumentation")
+    .addItem("📚 Generar estudio definitivo individual y toda la documentación", "createAllDocuments")
+    .addSeparator()
     .addItem("📙 Generar Certificado MGE", "createMGEcertificate")
     .addSeparator()
-    .addItem("📚 Generar estudio definitivo y toda la documentación", "createAllDocuments")
-    .addSeparator()
-    .addItem("✉️ Generar email para envío en Helpscout", "generateEmail")
+    .addItem("📗 Generar estudio instalación compartida", "createSharedStudy")
+    .addItem("📗 Generar estudio personalizado instalación compartida", "createCustomSharedStudy")
+    .addItem("📗 Generar estudios ahorro instalación compartida", "createSavingsSharedStudy")
     .addToUi()
 
 
   ui.createMenu("🤖 Utilidades")
-    //.addItem("💣 Borrar todos los campos de la pestaña actual", "eraseNamedFields")
-    .addItem("💣 Borrar campos de salida de documentos", "forgetFolders")
+    //.addItem("🗑️ Eliminar campos en la hoja activa","clearCells")
+    .addItem("🗑️ Eliminar curvas de carga seleccionadas","clearLoadCurves")
     .addItem("🖇️ Importar base de datos de materiales", "importDb")
     .addToUi()
 

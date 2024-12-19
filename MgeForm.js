@@ -31,7 +31,7 @@ function createMGEcertificate() {
       const destinationFolder = getDestinationFolder("folder0205")
 
       // Create a file in the same folder with a specific name
-      const fileName = `${getValue("nombre")} ${getValue("apellidos")} - Certificado MGE.pdf`
+      const fileName = `${getValue("nombreCompletoPromotor")} - Certificado MGE.pdf`
       Tools.deleteFile(fileName, destinationFolder)
       const file = destinationFolder.createFile(blob.setName(fileName))
 

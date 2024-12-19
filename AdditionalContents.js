@@ -35,58 +35,6 @@ function replaceBudgetTable(budget, budgetTable, subtotalColumName = "Total Cap�
 
 
 /**
- * Creates additional contents (budget table) for a PEM (Presupuesto de Ejecución Material) document.
- * @param {Document} doc - The Google Docs document to add contents to.
- */
-function createPemAdditionalContents(doc) {
-
-  // Replace budget table
-  const tables = doc.getBody().getTables()
-  const budgetTable = tables[0] // Manually select budget table!
-
-  // Get budgets and replace tables
-  const budget = getBudget(getOptionalElements = false).filter(e => e.type != "subitem")
-  // Take only chapter one and add empty line
-  const chapter1Budget = budget.slice(0, budget.findIndex(e => e.code == "2"))
-  replaceBudgetTable(chapter1Budget, budgetTable, subtotalColumName="Total Capítulo sin BI/CG (PEM) (€)")
-}
-
-
-/**
- * Creates additional contents (budget table) for a bill document.
- * @param {Document} doc - The Google Docs document to add contents to.
- */
-function createBillAdditionalContents(doc) {
-
-  // Replace budget table
-  const tables = doc.getBody().getTables()
-  const budgetTable = tables[tables.length - 2] // Manually select budget table!
-
-  // Get budgets and replace tables
-  const budget = getBudget(getOptionalElements = false).filter(e => e.type != "subitem")
-  replaceBudgetTable(budget, budgetTable)
-}
-
-
-/**
- * Creates additional contents (a filtered budget table that contains just material items) for an installation guide document.
- * @param {Document} doc - The Google Docs document to add contents to.
- */
-function createInstallationGuideAdditionalContents(doc) {
-
-  // Replace budget table
-  const tables = doc.getBody().getTables()
-  const budgetTable = tables[0] // Manually select budget table!
-
-  // Get budgets and replace tables
-  const budget = getBudget(getOptionalElements = false, getGuideTable = true)
-
-  const filteredBudget = budget.filter(e => e.type == "item"|| (e.type == "subitem" && e["Subcat. Coste"] == "MAT") || e.type == "empty" )
-  replaceGuideTable(filteredBudget, budgetTable)
-}
-
-
-/**
  * Replaces the content of a guide table (a budget table relevant for Energética's technicians) in a Google Docs document.
  * @param {Array} budget - The budget data to populate the table with.
  * @param {Table} budgetTable - The guide table to replace.
@@ -124,6 +72,75 @@ function replaceGuideTable(budget, budgetTable) {
 }
 
 
+
+/**
+ * Replaces specified placeholders in a Google Document with charts from specified Google Sheets.
+ * 
+ * @param {GoogleAppsScript.Document.Document} doc - The Google Document where images will be replaced.
+ * @param {Array<Object>} chartReplacements - An array of objects containing sheet names, placeholders, and their corresponding chart indices.
+ * @param {string} chartReplacements[].sheetName - The name of the sheet containing the chart.
+ * @param {string} chartReplacements[].replacementValue - The placeholder in the document to be replaced with a chart.
+ * @param {number} chartReplacements[].index - The index of the chart in the sheet to use for the replacement.
+ */
+function replaceChartsInDoc(doc, chartReplacements) {
+  const IMAGEWIDTH = 600;
+
+  // Get active spreadsheet
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  chartReplacements.forEach(({ sheetName, replacementValue, index }) => {
+    // Get charts from the specified sheet
+    const charts = ss.getSheetByName(sheetName).getCharts();
+
+    // Get image through Slide (workaround to preserve chart properties)
+    const slides = SlidesApp.create("temp");
+    const imageBlob = slides
+      .getSlides()[0]
+      .insertSheetsChartAsImage(charts[index])
+      .getAs("image/png");
+    DriveApp.getFileById(slides.getId()).setTrashed(true);
+    replaceImage(doc, replacementValue, imageBlob, IMAGEWIDTH);
+  });
+}
+
+
+
+/**
+ * Creates additional contents (budget table) for a PEM (Presupuesto de Ejecución Material) document.
+ * @param {Document} doc - The Google Docs document to add contents to.
+ */
+function createPemAdditionalContents(doc) {
+
+  // Replace budget table
+  const tables = doc.getBody().getTables()
+  const budgetTable = tables[0] // Manually select budget table!
+
+  // Get budgets and replace tables
+  const budget = getBudget(getOptionalElements = false).filter(e => e.type != "subitem")
+  // Take only chapter one and add empty line
+  const chapter1Budget = budget.slice(0, budget.findIndex(e => e.code == "2"))
+  replaceBudgetTable(chapter1Budget, budgetTable, subtotalColumName = "Total Capítulo sin BI/CG (PEM) (€)")
+}
+
+
+/**
+ * Creates additional contents (budget table) for a bill document.
+ * @param {Document} doc - The Google Docs document to add contents to.
+ */
+function createBillAdditionalContents(doc) {
+
+  // Replace budget table
+  const tables = doc.getBody().getTables()
+  const budgetTable = tables[tables.length - 2] // Manually select budget table!
+
+  // Get budgets and replace tables
+  const budget = getBudget(getOptionalElements = false).filter(e => e.type != "subitem")
+  replaceBudgetTable(budget, budgetTable)
+}
+
+
+
+
 /**
  * Creates additional contents (budget table, energy fluxes tables, energy charts) for a final study document.
  * @param {Document} doc - The Google Docs document to add contents to.
@@ -144,7 +161,6 @@ function createFinalStudyAdditionalContents(doc) {
   replaceBudgetTable(optionalBudget, optionalElementsTable)
 
 
-
   // Remove null production values lines in summary table
   const conventionalTotal = getValue("conventionalTotal")
   const recurringTotal = getValue("recurringTotal")
@@ -162,22 +178,77 @@ function createFinalStudyAdditionalContents(doc) {
   if (saveTotal == 0) saveTotalRow.removeFromParent()
 
 
+  // Replace chart images
+  const chartReplacementValues = [
+    { sheetName: "Documentación", replacementValue: "<graficaConsumos>", index: 0 },
+    { sheetName: "Documentación", replacementValue: "<graficaAutoconsumo>", index: 1 },
+    { sheetName: "Documentación", replacementValue: "<graficaFacturaMensual>", index: 2 },
+    { sheetName: "Documentación", replacementValue: "<graficaFacturaAnualImpuestos>", index: 3 }
+  ]
+  replaceChartsInDoc(doc, chartReplacementValues)
+}
 
-  // Get charts
-  const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const charts = ss.getSheetByName("Documentación").getCharts()
-  const chartReplacementValues = ["<graficaConsumos>", "<graficaAutoconsumo>", "<graficaFacturaMensual>", "<graficaFacturaAnualImpuestos>",]
-  const IMAGEWIDTH = 600
 
-  chartReplacementValues.forEach((chartReplacementValue, index) => {
-    // Get image through Slide (workaround to preserve chart properties)
-    const slides = SlidesApp.create("temp")
-    const imageBlob = slides
-      .getSlides()[0]
-      .insertSheetsChartAsImage(charts[index])
-      .getAs("image/png")
-    DriveApp.getFileById(slides.getId()).setTrashed(true)
-    replaceImage(doc, chartReplacementValue, imageBlob, IMAGEWIDTH)
-  })
+
+/**
+ * Creates additional contents (a filtered budget table that contains just material items) for an installation guide document.
+ * @param {Document} doc - The Google Docs document to add contents to.
+ */
+function createInstallationGuideAdditionalContents(doc) {
+
+  // Replace budget table
+  const tables = doc.getBody().getTables()
+  const budgetTable = tables[0] // Manually select budget table!
+
+  // Get budgets and replace tables
+  const budget = getBudget(getOptionalElements = false, getGuideTable = true)
+
+  const filteredBudget = budget.filter(e => e.type == "item" || (e.type == "subitem" && e["Subcat. Coste"] == "MAT") || e.type == "empty")
+  replaceGuideTable(filteredBudget, budgetTable)
+}
+
+
+/**
+ * Creates additional contents for study for shared installations
+ * @param {Document} doc - The Google Docs document to add contents to.
+ */
+function createCELstudy(doc) {
+
+  // Replace budget tables
+  const body = doc.getBody()
+  const tables = body.getTables()
+  const budgetTable = tables[tables.length - 2] // Manually select budget table!
+
+  // Get budgets and replace tables
+  const budget = getBudget(getOptionalElements = false).filter(e => e.type != "subitem")
+  replaceBudgetTable(budget, budgetTable)
+
+
+  // Replace chart images
+  const chartReplacementValues = [
+    { sheetName: "Documentación", replacementValue: "<graficaConsumos>", index: 0 },
+    { sheetName: "Documentación", replacementValue: "<graficaAutoconsumo>", index: 1 },
+    { sheetName: "Documentación", replacementValue: "<graficaFacturaMensual>", index: 2 },
+    { sheetName: "Documentación", replacementValue: "<graficaFacturaAnualImpuestos>", index: 3 }
+  ]
+  replaceChartsInDoc(doc, chartReplacementValues)
+
+}
+
+
+/**
+ * Creates additional contents for the document on savings through CEL.
+ * @param {Document} doc - The Google Docs document to add contents to.
+ */
+function createCELwithQuotaAdditionalContents(doc) {
+
+  // Replace chart images
+  const chartReplacementValues = [
+    { sheetName: "Flujos", replacementValue: "<graficaEstacionalidadConsumo>", index: 7 },
+    { sheetName: "Flujos", replacementValue: "<graficaConsumoProduccionHoras>", index: 3 },
+    { sheetName: "Flujos", replacementValue: "<graficaExcedenteDemanda>", index: 4 },
+    { sheetName: "Documentación", replacementValue: "<graficaFacturaMensual>", index: 2 },
+  ]
+  replaceChartsInDoc(doc, chartReplacementValues)
 
 }
