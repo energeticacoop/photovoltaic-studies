@@ -12,36 +12,32 @@ function processSAMdata() {
  * Retrieves climate file data from the European Commission's Joint Research Centre (JRC) API.
  */
 function getClimateFile() {
-  const destinationFolder = getParentFolder()
+  const climateFilesFolder = "10R7QO6UcCrIcZSVmAyHKWfaZV1MkzbP4" 
+  const destinationFolder = DriveApp.getFolderById(climateFilesFolder)
+
   const coordinates = getValue("coordinates")
   const [latitude, longitude] = coordinates.toString().split(/(?:,| )+/)
+  const outputFormat = "epw"
+  const useHorizon = 1
+  const browser = 0
 
-  outputFormats = ["csv", "epw"]
-  outputFormats.forEach((outputFormat) => {
-    // PVGIS API parameters
-    const useHorizon = 1
-    const browser = 0
-    const tmyFilename = `tmy_(${latitude},${longitude}).${outputFormat}`
+  const tmyFileName = getValue("tmyFileName")
+  const tmyFilename = `${tmyFileName}.${outputFormat}`;
 
-    // Download and save TMY file
-    Tools.showMessage(
-      "ℹ️ Descargando TMY",
-      `Solicitando fichero de clima en formato ${outputFormat.toUpperCase()}...`
-    )
-    const tmyURL = `https://re.jrc.ec.europa.eu/api/tmy`
-      + `?lat=${latitude}`
-      + `&lon=${longitude}`
-      + `&usehorizon=${useHorizon}`
-      + `&outputformat=${outputFormat}`
-      + `&browser=${browser}`
-    Tools.deleteFile(tmyFilename, destinationFolder)
-    const tmyFile = downloadFile(tmyURL, tmyFilename, destinationFolder).file
-    setURL(
-      SpreadsheetApp.getActiveSpreadsheet().getRangeByName(`tmyFile${outputFormat}`),
-      tmyFile.getUrl(),
-      `Fichero TMY en ${outputFormat.toUpperCase()}`
-    )
-  })
+  const tmyURL = `https://re.jrc.ec.europa.eu/api/tmy`
+    + `?lat=${latitude}`
+    + `&lon=${longitude}`
+    + `&usehorizon=${useHorizon}`
+    + `&outputformat=${outputFormat}`
+    + `&browser=${browser}`
+
+  Tools.deleteFile(tmyFilename, destinationFolder)
+
+  const tmyFile = downloadFile(tmyURL, tmyFilename, destinationFolder).file
+  setURL(
+    SpreadsheetApp.getActiveSpreadsheet().getRangeByName(`tmyFileepw`),
+    tmyFile.getUrl(),
+    `Fichero TMY en ${outputFormat.toUpperCase()}`)
 }
 
 /**
@@ -377,7 +373,7 @@ function getUTMcoordinates() {
  * Retrieves postal code from coordinates via Google Maps Geocode API.
  */
 function getPostalCode() {
-    Tools.showMessage("ℹ️ Código postal", `Intentando obtener código postal...`, 3)
+  Tools.showMessage("ℹ️ Código postal", `Intentando obtener código postal...`, 3)
   try {
     const coordinates = getValue("coordinates")
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.replace(/\s+/g, '')}&&result_type=postal_code&key=${GOOGLEMAPSAPIKEY}`

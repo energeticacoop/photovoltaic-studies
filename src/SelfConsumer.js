@@ -174,17 +174,16 @@ clearLoadCurve(headingNamedRange) {
     const isWeekendOrHoliday = getColumn("isWeekendOrHoliday")
     const seasons = getColumn("seasons")
 
-    const recurringLoadCurve = []
-    dates.forEach((date, index) => {
-      const value = +recurringDaily[date.getHours()] +
+    const recurringLoadCurve = dates.map(
+      (date, index) =>
+        +recurringDaily[date.getHours()] +
         +recurringMonthly[date.getHours()][date.getMonth()] +
         +recurringWeekly[date.getHours()][(date.getDay() + 6) % 7] +
-        +recurringSeasonal[date.getHours()][isWeekendOrHoliday[index]
-          ? seasons[index] * 2 + 1 // Weekend or national holiday column
-          : seasons[index] * 2 // Weekdays column
+        +recurringSeasonal[date.getHours()][
+          isWeekendOrHoliday[index]
+            ? seasons[index] * 2 + 1 // Weekend or national holiday column
+            : seasons[index] * 2 // Weekdays column
         ]
-      recurringLoadCurve.push(value)
-    }
     )
 
     // Create and set the recurring load curve
@@ -268,7 +267,8 @@ clearLoadCurve(headingNamedRange) {
     const partialCCH = conventionalCCH.map(
       (e, index) => e + recurringCCH[index] + ashpCCH[index]
     )
-    const production = getColumn("normalizedProduction").map(value => value * this["Beta elegido"])
+    const beta = getColumn("chosenBetas")[this.selfConsumerIndex - 1] 
+    const production = getColumn("normalizedProduction").map(value => value * beta)
     const partialSurplus = partialCCH.map((e, index) =>
       Math.max(0, production[index] - e)
     )

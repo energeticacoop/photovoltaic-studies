@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "ES5", // Match Google Apps Script runtime
-    "lib": ["es2015"], // Include ES2015 library for additional features
-    "types": ["google-apps-script"], // Include Apps Script typings
-    "strict": true // Optional, for strict TypeScript checks
-  }
-}

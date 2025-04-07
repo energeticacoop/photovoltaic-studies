@@ -157,7 +157,7 @@ function createDocumentFromTemplate(template) {
   const templateId = template.templateId
   const exportToPDF = template.exportToPDF
   const copyComments = template.copyComments
-  const templateType = templateType
+  const templateType = template.templateType
 
   // Remove all matching files on destination folder to avoid duplicates
   Tools.deleteFile(filename, destinationFolder)
