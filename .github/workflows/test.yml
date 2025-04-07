@@ -1,0 +1,36 @@
+name: Test Google Apps Script
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Step 3: Install dependencies (including Mocha)
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Step 4: Run the Mocha tests
+      - name: Run Mocha Tests
+        run: |
+          npm test
