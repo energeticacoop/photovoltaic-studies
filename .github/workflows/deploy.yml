@@ -23,13 +23,7 @@ jobs:
 
       - name: Setup clasp credentials
         run: |
-          echo "$CLASP_CREDENTIALS" > ~/.clasp.json
-        env:
-          CLASP_CREDENTIALS: ${{ secrets.CLASP_CREDENTIALS }}
-
-      - name: Check if secret is loaded
-        run: |
-          echo "Length of credentials: ${#CLASP_CREDENTIALS}"
+          echo "$CLASP_CREDENTIALS" > ~/.clasprc.json
         env:
           CLASP_CREDENTIALS: ${{ secrets.CLASP_CREDENTIALS }}
 
