@@ -47,7 +47,7 @@ This automation significantly reduces the time spent on manual calculations and 
    git push origin feature/my-new-feature
    ```
 
-3. **Create a PR to `dev` on GitHub.**
+3. **Create a PR to `dev` or `main` on GitHub.**
 
 ---
 
