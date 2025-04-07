@@ -1,12 +1,12 @@
 # Energética Coop's Photovoltaic Studies
 
+[![clasp](https://img.shields.io/badge/built%20with-clasp-4285f4.svg)](https://github.com/google/clasp)
+
 ## 📖 Project Description
 
 The **Energética Coop's Photovoltaic Studies** project is a Google Apps Script (GAS) solution designed to operate within a Google Sheets spreadsheet. It automates the generation of photovoltaic studies and streamlines the process of generating documentation for the engineering team.
 
 This automation significantly reduces the time spent on manual calculations and document creation, making the process more efficient and error-free. The goal is to provide an assisted, time-saving solution that enhances the workflow for the team.
-
----
 
 ## 🛠️ Setting Up the Local Development Environment
 
@@ -29,8 +29,6 @@ This automation significantly reduces the time spent on manual calculations and 
    node -v
    ```
 
----
-
 ## 🧑‍💻 Preferred Workflow
 
 1. **Create a feature branch from `dev`:**
@@ -49,16 +47,12 @@ This automation significantly reduces the time spent on manual calculations and 
 
 3. **Create a PR to `dev` or `main` on GitHub.**
 
----
-
 ## 🚀 Deployment Workflow
 
 - **Push to `dev` →** Runs tests and deploys to the **dev Google Sheet**.
 - **Push to `main` →** Runs tests and deploys to the **prod Google Sheet**.
 
 The deployment to Google Sheets is managed using [**clasp**](https://github.com/google/clasp), a command-line tool for managing Google Apps Script projects. The workflows are set up to automatically deploy the code to the correct environment (either `dev` or `prod`) after successful tests.
-
----
 
 ## 🧪 Testing with Mocha
 
