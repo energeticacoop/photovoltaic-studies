@@ -392,5 +392,3 @@ function getPostalCode() {
     SpreadsheetApp.getUi().alert("Ha habido un error al obtener el código postal. Habrá que buscarlo a mano ;)")
   }
 }
-
-
