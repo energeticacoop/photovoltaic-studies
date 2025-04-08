@@ -249,11 +249,13 @@ function getLoadCurveFromDatadisAPI(nif, clientCups, startDate, endDate) {
     throw new Error('Los valores de NIF, CUPS y fechas de inicio y fin de Datadis no pueden estar vacías.')
   }
 
-
+  const scriptProperties = PropertiesService.getScriptProperties()
+  const datadisUser = scriptProperties.getProperty("DATADIS_USER")
+  const datadisPassword = scriptProperties.getProperty("DATADIS_PASSWORD")
   // Get authentication token from DATADIS
   const auth = {
-    username: DATADISUSER,
-    password: DATADISPASSWORD
+    username: datadisUser,
+    password: datadisPassword
   }
   const loginOptions = {
     method: "POST",

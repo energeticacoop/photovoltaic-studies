@@ -79,7 +79,9 @@ function getSatelliteImages() {
       10 ** scalePrecision
 
     // Download image from Google Static Map API
-    const staticMapURL = `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates}&zoom=${zoom}&size=${size}&scale=${scale}&maptype=${mapType}&key=${GOOGLEMAPSAPIKEY}`
+    const scriptProperties = PropertiesService.getScriptProperties()
+    const googleMapsApiKey = scriptProperties.getProperty("GOOGLEMAPS_API_KEY")
+    const staticMapURL = `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates}&zoom=${zoom}&size=${size}&scale=${scale}&maptype=${mapType}&key=${googleMapsApiKey}`
     const currentFilename = `mapa-(${latitude},${longitude})-zoom-(${zoom})-scale-(${roundedMetersPer100Px}).png`
     Tools.deleteFile(currentFilename, destinationFolder)
     const currentFile = downloadFile(
@@ -373,10 +375,13 @@ function getUTMcoordinates() {
  * Retrieves postal code from coordinates via Google Maps Geocode API.
  */
 function getPostalCode() {
+  const scriptProperties = PropertiesService.getScriptProperties()
+  const googleMapsApiKey = scriptProperties.getProperty("GOOGLEMAPS_API_KEY")
+
   Tools.showMessage("ℹ️ Código postal", `Intentando obtener código postal...`, 3)
   try {
     const coordinates = getValue("coordinates")
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.replace(/\s+/g, '')}&&result_type=postal_code&key=${GOOGLEMAPSAPIKEY}`
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.replace(/\s+/g, '')}&&result_type=postal_code&key=${googleMapsApiKey}`
     const response = UrlFetchApp.fetch(url);
     const json = response.getContentText();
     const obj = JSON.parse(json)
