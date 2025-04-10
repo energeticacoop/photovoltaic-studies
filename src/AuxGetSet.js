@@ -57,6 +57,48 @@ function get(rangeName) {
 }
 
 
+/**
+ * Sets values in a named range in Google Sheets.
+ * It handles single values, multiple values (matrix), and single column values.
+ * It also performs error checking to ensure the shape of the data matches the shape of the range.
+ * 
+ * @param {string} name - The name of the range to set the values in.
+ * @param {any|Array<any>|Array<Array<any>>} values - The value(s) to set:
+ *    - A single value for a single cell.
+ *    - An array of values for a column (single array of values).
+ *    - A matrix (2D array) for multiple cells.
+ */
+function set(name, values) {
+  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(name)
+
+  // If the values are a single value, wrap it in an array to treat it as a single cell
+  if (!Array.isArray(values)) {
+    values = [[values]]  // Wrap single value in an array to set it as a single cell
+  }
+  
+  // If it's an array but not a 2D array, it’s a single column (1D array)
+  if (Array.isArray(values) && !Array.isArray(values[0])) {
+    values = values.map(value => [value])  // Convert 1D array to 2D array
+  }
+
+  // Check if the shape of values matches the shape of the range
+  const numRows = range.getNumRows()
+  const numCols = range.getNumColumns()
+  const valuesNumRows = values.length
+  const valuesNumCols = values[0].length
+
+  if (valuesNumRows !== numRows || valuesNumCols !== numCols) {
+    throw new Error(`Error: Mismatched dimensions. The range "${name}" expects a ${numRows}x${numCols} array, but the provided data is ${valuesNumRows}x${valuesNumCols}.`)
+  }
+
+  // Set the values in the range
+  range.setValues(values)
+}
+
+
+
+
+
 
 
 
@@ -88,6 +130,9 @@ function getValues(rangeName) {
 function getColumn(rangeName) {
   return getValues(rangeName).map((element) => element[0])
 }
+
+
+
 
 
 

@@ -371,27 +371,7 @@ function getUTMcoordinates() {
 }
 
 
-/**
- * Retrieves postal code from coordinates via Google Maps Geocode API.
- */
-function getPostalCode() {
-  const scriptProperties = PropertiesService.getScriptProperties()
-  const googleMapsApiKey = scriptProperties.getProperty("GOOGLEMAPS_API_KEY")
 
-  Tools.showMessage("ℹ️ Código postal", `Intentando obtener código postal...`, 3)
-  try {
-    const coordinates = getValue("coordinates")
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coordinates.replace(/\s+/g, '')}&&result_type=postal_code&key=${googleMapsApiKey}`
-    const response = UrlFetchApp.fetch(url);
-    const json = response.getContentText();
-    const obj = JSON.parse(json)
-    const addr = obj.results[0]
-    const cp = addr.address_components[0].long_name
-    setValue("CP", cp)
-  } catch (error) {
-    SpreadsheetApp.getUi().alert("Ha habido un error al obtener el código postal. Habrá que buscarlo a mano ;)")
-  }
-}
 
 
 
@@ -401,8 +381,6 @@ function getPostalCode() {
 function getPostalCode() {
   const scriptProperties = PropertiesService.getScriptProperties()
   const googleMapsApiKey = scriptProperties.getProperty("GOOGLEMAPS_API_KEY")
-
-  Tools.showMessage("ℹ️ Código postal", `Intentando obtener código postal...`, 3)
 
   try {
     // Retrieve coordinates using get() with validation
@@ -410,7 +388,7 @@ function getPostalCode() {
     const postalCode = extractPostalCodeFromCoordinates(coordinates, googleMapsApiKey)
 
     // Set the postal code in the "CP" named range
-    setValue("CP", postalCode)
+    set("CP", postalCode)
     
   } catch (error) {
     // Show the error with a custom alert message
@@ -418,7 +396,6 @@ function getPostalCode() {
     console.error(error.message)  // Log the detailed error message
   }
 }
-
 
 /**
  * Extracts the postal code from the coordinates using the Google Maps Geocode API.
