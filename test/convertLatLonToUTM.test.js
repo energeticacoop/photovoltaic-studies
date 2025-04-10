@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { convertLatLonToUTM } = require('../src/Production'); // Adjust the path as needed
+const { convertLatLonToUTM } = require('../src/Production/Production'); // Adjust the path as needed
 
 describe('convertLatLonToUTM', function () {
   // Test valid inputs
