@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "test": "mocha"
   },
@@ -20,5 +21,8 @@
   "devDependencies": {
     "chai": "^5.2.0",
     "mocha": "^11.1.0"
+  },
+  "dependencies": {
+    "sinon": "^20.0.0"
   }
 }
