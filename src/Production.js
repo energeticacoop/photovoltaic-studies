@@ -224,7 +224,7 @@ function extractPostalCodeFromCoordinates(coordinates, apiKey) {
 }
 
 
-module.exports = {
-  extractPostalCodeFromCoordinates,
-  convertLatLonToUTM,
-};
+// module.exports = {
+//  extractPostalCodeFromCoordinates,
+//  convertLatLonToUTM,
+//}; 
