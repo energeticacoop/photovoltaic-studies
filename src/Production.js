@@ -397,11 +397,8 @@ function getPostalCode() {
 
 /**
  * Retrieves postal code from coordinates via Google Maps Geocode API.
- * 
- * @param {string} coordinatesRangeName - The named range for coordinates (lat,lng).
- * @param {string} postalCodeRangeName - The named range to store the postal code.
  */
-function getPostalCode(coordinatesRangeName, postalCodeRangeName) {
+function getPostalCode() {
   const scriptProperties = PropertiesService.getScriptProperties()
   const googleMapsApiKey = scriptProperties.getProperty("GOOGLEMAPS_API_KEY")
 
@@ -409,15 +406,16 @@ function getPostalCode(coordinatesRangeName, postalCodeRangeName) {
 
   try {
     // Retrieve coordinates using get() with validation
-    const coordinates = get(coordinatesRangeName)  // Get the value from the named range, validated
+    const coordinates = get("coordinates")  // Get the value from the "coordinates" named range, validated
     const postalCode = extractPostalCodeFromCoordinates(coordinates, googleMapsApiKey)
 
-    // Set the postal code in the specified range
-    setValue(postalCodeRangeName, postalCode)
+    // Set the postal code in the "CP" named range
+    setValue("CP", postalCode)
     
   } catch (error) {
-    SpreadsheetApp.getUi().alert("Ha habido un error al obtener el código postal. Habrá que buscarlo a mano ;)")
-    console.error(error.message)
+    // Show the error with a custom alert message
+    SpreadsheetApp.getUi().alert(`Ha habido un error al obtener el código postal: ${error.message}`)
+    console.error(error.message)  // Log the detailed error message
   }
 }
 
