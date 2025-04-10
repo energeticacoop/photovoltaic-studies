@@ -1,3 +1,100 @@
+
+/**
+ * Retrieves and validates a range's value(s) from the active spreadsheet.
+ *
+ * Supports single cell, single-column, or full matrix based on schema.
+ *
+ * @param {string} rangeName - The name of the named range.
+ * @returns {*} The validated value(s) from the range.
+ * @throws {Error} If the range doesn't exist, the schema is missing, or validation fails.
+ */
+function get(rangeName) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+  const range = sheet.getRangeByName(rangeName)
+
+  if (!range) {
+    throw new Error(`⚠️ El rango con nombre "${rangeName}" no existe.`)
+  }
+
+  const schema = RangeSchemas[rangeName]
+
+  if (!schema) {
+    throw new Error(`⚠️ No se ha definido un esquema de validación para el rango "${rangeName}".`)
+  }
+
+  const shape = schema.shape
+
+  let value
+
+  switch (shape) {
+    case "cell":
+      value = range.getValue()
+      break
+
+    case "column":
+      value = range.getValues().map(row => row[0])
+      break
+
+    case "matrix":
+      value = range.getValues()
+      break
+
+    default:
+      throw new Error(`🚫 Forma de rango desconocida: "${shape}" en "${rangeName}"`)
+  }
+
+  // Apply validation
+  const isValid = schema.validator(value)
+
+  if (!isValid) {
+    // Directly use the error message
+    const errorMessage = schema.error
+
+    throw new Error(`❌ Error en "${rangeName}": ${errorMessage} (valor: "${JSON.stringify(value)}")`)
+  }
+
+  return value
+}
+
+
+
+
+
+
+
+/**
+ * Gets a single value from a named range in a Google Sheets spreadsheet.
+ * @param {string} rangeName - The name of the range to get the value from.
+ * @returns {any} The value from the named range.
+ */
+function getValue(rangeName) {
+  return getRangeByName(rangeName).getValue()
+}
+
+/**
+ * Gets multiple values from a named range in a Google Sheets spreadsheet.
+ * @param {string} rangeName - The name of the range to get the values from.
+ * @returns {Array<Array<any>>} The values from the named range.
+ */
+function getValues(rangeName) {
+  return getRangeByName(rangeName).getValues()
+}
+
+/**
+ * Gets the values from a single column of a named range in a Google Sheets spreadsheet.
+ * @param {string} rangeName - The name of the range to get the values from.
+ * @returns {Array<any>} The values from the named range column.
+ */
+function getColumn(rangeName) {
+  return getValues(rangeName).map((element) => element[0])
+}
+
+
+
+
+
+
+
 /**
  * Sets a URL link with text in a specific range in a Google Sheets spreadsheet.
  * @param {Range} range - The range to set the URL link with text.
@@ -61,32 +158,11 @@ function setColumn(name, values) {
   )
 }
 
-/**
- * Gets a single value from a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the value from.
- * @returns {any} The value from the named range.
- */
-function getValue(rangeName) {
-  return getRangeByName(rangeName).getValue()
-}
 
-/**
- * Gets multiple values from a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the values from.
- * @returns {Array<Array<any>>} The values from the named range.
- */
-function getValues(rangeName) {
-  return getRangeByName(rangeName).getValues()
-}
 
-/**
- * Gets the values from a single column of a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the values from.
- * @returns {Array<any>} The values from the named range column.
- */
-function getColumn(rangeName) {
-  return getValues(rangeName).map((element) => element[0])
-}
+
+
+
 
 /**
  * Clears the content of a named range in a Google Sheets spreadsheet.
