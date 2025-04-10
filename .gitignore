@@ -4,4 +4,7 @@ apiKeys.js
 # ignore even valid files if in…
 .git/**
 node_modules/**
+
+# Avoid testing workflow for now
+test.yml
 test/*
