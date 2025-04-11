@@ -50,7 +50,7 @@ function getSatelliteImages() {
       }
     }
 
-    satelliteImages[zoom - minZoom] = currentFile.getUrl();
+    satelliteImagesUrls[zoom - minZoom] = currentFile.getUrl();
     imagesTexts[zoom - minZoom] = `Zoom ${zoom}`;
     scales[zoom - minZoom] = roundedMetersPer100Px;
 
@@ -58,7 +58,9 @@ function getSatelliteImages() {
   }
 
   // Set the retrieved data (Satellite Images and Scales)
-  setColumnURLS("satelliteImages", satelliteImages, imagesTexts);  // Set URLs for the satellite images
+  for (let zoom = minZoom; zoom < maxZoom + 1; zoom++){
+    setURL("satellite" + zoom.toString(), satelliteImages[zoom - minZoom], imagesTexts[zoom -minZoom])
+  }
   set("scales", scales);  // Set the scales for the images
 }
 

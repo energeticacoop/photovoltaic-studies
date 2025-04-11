@@ -8,6 +8,14 @@ const RangeSchemas = {
     validator: isCoordinatePair,
     error: "Las coordenadas deben estar en formato 'lat,lng'" // Static error message
   },
+  tmyFileName: {
+    shape: "cell",
+    validator: isNonEmptyString,
+    error: "Nombre de fichero de clima incorrecto"
+  },
+
+
+  
   tagsColumn: {
     shape: "column",
     validator: (values) => values.every(isNonEmptyString),

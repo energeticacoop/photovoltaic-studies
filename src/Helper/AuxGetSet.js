@@ -56,7 +56,6 @@ function get(rangeName) {
   return value
 }
 
-
 /**
  * Sets values in a named range in Google Sheets.
  * It handles single values, multiple values (matrix), and single column values.
@@ -133,7 +132,6 @@ function clearRange(rangeName) {
 function getRangeByName(rangeName) {
   return SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName)
 }
-
 
 /**
  * Creates an array of template objects from the named range "templates"
