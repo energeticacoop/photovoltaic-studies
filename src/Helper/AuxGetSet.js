@@ -1,4 +1,3 @@
-
 /**
  * Retrieves and validates a range's value(s) from the active spreadsheet.
  *
@@ -55,7 +54,6 @@ function get(rangeName) {
 
   return value
 }
-
 
 /**
  * Sets values in a named range in Google Sheets.
@@ -137,41 +135,27 @@ function getColumn(rangeName) {
 
 
 
-
-
-
 /**
- * Sets a URL link with text in a specific range in a Google Sheets spreadsheet.
- * @param {Range} range - The range to set the URL link with text.
- * @param {string} url - The URL link to set.
- * @param {string} text - The text to display for the URL link.
+ * Applies a URL link to a cell using its existing text content as the clickable text.
+ *
+ * @param {string} rangeName - The named range identifying the cell to update.
+ * @param {string} url - The URL to link the existing text to.
  */
-function setURL(range, url, text) {
-  var richValue = SpreadsheetApp.newRichTextValue()
+function setURL(rangeName, url) {
+  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName)
+  const text = range.getDisplayValue()
+
+  const richValue = SpreadsheetApp.newRichTextValue()
     .setText(text)
     .setLinkUrl(url)
     .build()
-  range
-    .setRichTextValue(richValue)
+
+  range.setRichTextValue(richValue)
 }
 
 
-/**
- * Sets URL links with texts in a specific column range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range where the URLs will be set.
- * @param {Array<string>} urls - An array of URL links to set.
- * @param {Array<string>} texts - An array of texts to display for the URL links.
- */
-function setColumnURLS(rangeName, urls, texts) {
-  const range = getRangeByName(rangeName)
-  range.getValues().forEach(function (row, i) {
-    var richValue = SpreadsheetApp.newRichTextValue()
-      .setText(texts[i])
-      .setLinkUrl(urls[i])
-      .build()
-    range.getCell(i + 1, 1).setRichTextValue(richValue)
-  })
-}
+
+
 
 /**
  * Sets a single value in a named range in a Google Sheets spreadsheet.

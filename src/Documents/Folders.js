@@ -78,6 +78,7 @@ function forgetFolders() {
  */
 function printFolderLink(rangename) {
   const folder = getDestinationFolder(rangename)
+  set()
   setURL(getRangeByName(rangename), folder.getUrl(), folder.getName())
 }
 
