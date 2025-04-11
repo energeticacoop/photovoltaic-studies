@@ -1,60 +1,33 @@
-
 /**
  * Retrieves and validates a range's value(s) from the active spreadsheet.
- *
- * Supports single cell, single-column, or full matrix based on schema.
  *
  * @param {string} rangeName - The name of the named range.
  * @returns {*} The validated value(s) from the range.
  * @throws {Error} If the range doesn't exist, the schema is missing, or validation fails.
  */
 function get(rangeName) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet()
-  const range = sheet.getRangeByName(rangeName)
+  const sheet = SpreadsheetApp.getActiveSpreadsheet();
+  const range = sheet.getRangeByName(rangeName);
 
   if (!range) {
-    throw new Error(`⚠️ El rango con nombre "${rangeName}" no existe.`)
+    throw new Error(`⚠️ El rango con nombre "${rangeName}" no existe.`);
   }
 
-  const schema = RangeSchemas[rangeName]
+  const validator = RangeSchemas[rangeName];
 
-  if (!schema) {
-    throw new Error(`⚠️ No se ha definido un esquema de validación para el rango "${rangeName}".`)
+  if (!validator) {
+    throw new Error(`⚠️ No se ha definido un esquema de validación para el rango "${rangeName}".`);
   }
 
-  const shape = schema.shape
-
-  let value
-
-  switch (shape) {
-    case "cell":
-      value = range.getValue()
-      break
-
-    case "column":
-      value = range.get().map(row => row[0])
-      break
-
-    case "matrix":
-      value = range.get()
-      break
-
-    default:
-      throw new Error(`🚫 Forma de rango desconocida: "${shape}" en "${rangeName}"`)
+  try {
+    validator(range);  // Perform the validation
+  } catch (error) {
+    throw new Error(`❌ Error en "${rangeName}": ${error.message}`);
   }
 
-  // Apply validation
-  const isValid = schema.validator(value)
-
-  if (!isValid) {
-    // Directly use the error message
-    const errorMessage = schema.error
-
-    throw new Error(`❌ Error en "${rangeName}": ${errorMessage} (valor: "${JSON.stringify(value)}")`)
-  }
-
-  return value
+  return range.getValue()
 }
+
 
 /**
  * Sets values in a named range in Google Sheets.
