@@ -83,7 +83,7 @@ function importDb() {
     const dataRange = ss.getDataRange()
 
     // get the data values in range
-    const dataValues = dataRange.getValues()
+    const dataValues = dataRange.get()
 
     // target sheet
     const targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName)
@@ -96,7 +96,7 @@ function importDb() {
   })
 
   // Set importation date to current date
-  setValue("fechaImportacion", new Date())
+  set("fechaImportacion", new Date())
 
 }
 

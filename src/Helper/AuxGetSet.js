@@ -1,3 +1,4 @@
+
 /**
  * Retrieves and validates a range's value(s) from the active spreadsheet.
  *
@@ -31,11 +32,11 @@ function get(rangeName) {
       break
 
     case "column":
-      value = range.getValues().map(row => row[0])
+      value = range.get().map(row => row[0])
       break
 
     case "matrix":
-      value = range.getValues()
+      value = range.get()
       break
 
     default:
@@ -54,6 +55,7 @@ function get(rangeName) {
 
   return value
 }
+
 
 /**
  * Sets values in a named range in Google Sheets.
@@ -93,48 +95,6 @@ function set(name, values) {
   range.setValues(values)
 }
 
-
-
-
-
-
-
-
-
-
-/**
- * Gets a single value from a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the value from.
- * @returns {any} The value from the named range.
- */
-function getValue(rangeName) {
-  return getRangeByName(rangeName).getValue()
-}
-
-/**
- * Gets multiple values from a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the values from.
- * @returns {Array<Array<any>>} The values from the named range.
- */
-function getValues(rangeName) {
-  return getRangeByName(rangeName).getValues()
-}
-
-/**
- * Gets the values from a single column of a named range in a Google Sheets spreadsheet.
- * @param {string} rangeName - The name of the range to get the values from.
- * @returns {Array<any>} The values from the named range column.
- */
-function getColumn(rangeName) {
-  return getValues(rangeName).map((element) => element[0])
-}
-
-
-
-
-
-
-
 /**
  * Applies a URL link to a cell using either the existing text content or a provided one.
  *
@@ -143,53 +103,16 @@ function getColumn(rangeName) {
  * @param {string} [text] - Optional. If provided, will be used as the link's display text.
  */
 function setURL(rangeName, url, text) {
-  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
-  const displayText = text !== undefined ? text : range.getDisplayValue();
+  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName)
+  const displayText = text !== undefined ? text : range.getDisplayValue()
 
   const richValue = SpreadsheetApp.newRichTextValue()
     .setText(displayText)
     .setLinkUrl(url)
-    .build();
+    .build()
 
-  range.setRichTextValue(richValue);
+  range.setRichTextValue(richValue)
 }
-
-
-
-
-
-/**
- * Sets a single value in a named range in a Google Sheets spreadsheet.
- * @param {string} name - The name of the range where the value will be set.
- * @param {any} value - The value to set.
- */
-function setValue(name, value) {
-  getRangeByName(name).setValue(value)
-}
-
-/**
- * Sets multiple values in a named range in a Google Sheets spreadsheet.
- * @param {string} name - The name of the range where the values will be set.
- * @param {Array<Array<any>>} values - The values to set.
- */
-function setValues(name, values) {
-  getRangeByName(name).setValues(values)
-}
-
-/**
- * Sets values in a single column of a named range in a Google Sheets spreadsheet.
- * @param {string} name - The name of the range where the values will be set.
- * @param {Array<any>} values - The values to set in the column.
- */
-function setColumn(name, values) {
-  setValues(
-    name,
-    values.map((element) => [element])
-  )
-}
-
-
-
 
 
 
@@ -221,7 +144,7 @@ function getRangeByName(rangeName) {
  */
 function createTemplatesArray(outputNamedRange) {
   // Get the named range "templates" that contains the template data
-  const templatesData = getValues("templates")
+  const templatesData = get("templates")
 
   // Get the headers from the first row (index 0) to use as object keys
   const headers = templatesData[0]

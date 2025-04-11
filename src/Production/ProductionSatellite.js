@@ -5,7 +5,7 @@
  */
 function getSatelliteImages() {
   const destinationFolder = getParentFolder();
-  const coordinates = getValue("coordinates"); 
+  const coordinates = get("coordinates"); 
   const [latitude, longitude] = coordinates.toString().split(/(?:,| )+/).map((el) => parseFloat(el));  // Parse them into latitude and longitude
 
 

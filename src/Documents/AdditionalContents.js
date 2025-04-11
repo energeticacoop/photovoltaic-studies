@@ -162,10 +162,10 @@ function createFinalStudyAdditionalContents(doc) {
 
 
   // Remove null production values lines in summary table
-  const conventionalTotal = getValue("conventionalTotal")
-  const recurringTotal = getValue("recurringTotal")
-  const ashpTotal = getValue("ashpTotal")
-  const saveTotal = getValue("saveTotal")
+  const conventionalTotal = get("conventionalTotal")
+  const recurringTotal = get("recurringTotal")
+  const ashpTotal = get("ashpTotal")
+  const saveTotal = get("saveTotal")
   // Get master TableRows
   const summaryTable = tables[2] // Manually select summary table!
   const conventionalTotalRow = summaryTable.getRow(1)

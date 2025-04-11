@@ -15,13 +15,13 @@ function getClimateFile() {
   const climateFilesFolder = "10R7QO6UcCrIcZSVmAyHKWfaZV1MkzbP4" 
   const destinationFolder = DriveApp.getFolderById(climateFilesFolder)
 
-  const coordinates = getValue("coordinates")
+  const coordinates = get("coordinates")
   const [latitude, longitude] = coordinates.toString().split(/(?:,| )+/)
   const outputFormat = "epw"
   const useHorizon = 1
   const browser = 0
 
-  const tmyFileName = getValue("tmyFileName")
+  const tmyFileName = get("tmyFileName")
   const tmyFilename = `${tmyFileName}.${outputFormat}`;
 
   const tmyURL = `https://re.jrc.ec.europa.eu/api/tmy`

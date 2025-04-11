@@ -183,13 +183,13 @@ function CUANTIAENTEXTO(num) {
 // TESTING
 function convertInvestmentToText() {
 
-  const investment = getValue("presupuestoSinIva")
+  const investment = get("presupuestoSinIva")
   const investmentInText = NumeroALetras(investment)
-  setValue("inversionSinIvaTexto", investmentInText)
+  set("inversionSinIvaTexto", investmentInText)
 
-  const investmentVat = getValue("inversion")
+  const investmentVat = get("inversion")
   const investmentVatInText = NumeroALetras(investmentVat)
-  setValue("inversionConIvaTexto", investmentVatInText)
+  set("inversionConIvaTexto", investmentVatInText)
   
 
 }
