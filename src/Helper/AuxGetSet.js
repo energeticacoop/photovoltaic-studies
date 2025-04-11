@@ -136,21 +136,22 @@ function getColumn(rangeName) {
 
 
 /**
- * Applies a URL link to a cell using its existing text content as the clickable text.
+ * Applies a URL link to a cell using either the existing text content or a provided one.
  *
  * @param {string} rangeName - The named range identifying the cell to update.
- * @param {string} url - The URL to link the existing text to.
+ * @param {string} url - The URL to link.
+ * @param {string} [text] - Optional. If provided, will be used as the link's display text.
  */
-function setURL(rangeName, url) {
-  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName)
-  const text = range.getDisplayValue()
+function setURL(rangeName, url, text) {
+  const range = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+  const displayText = text !== undefined ? text : range.getDisplayValue();
 
   const richValue = SpreadsheetApp.newRichTextValue()
-    .setText(text)
+    .setText(displayText)
     .setLinkUrl(url)
-    .build()
+    .build();
 
-  range.setRichTextValue(richValue)
+  range.setRichTextValue(richValue);
 }
 
 

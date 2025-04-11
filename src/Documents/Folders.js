@@ -69,35 +69,3 @@ function forgetFolders() {
       range.getRange().clearContent()
   })
 }
-
-
-/**
- * Prints the link to a folder in the spreadsheet.
- * @param {string} rangename - The name of the range in the spreadsheet.
- * @returns {void}
- */
-function printFolderLink(rangename) {
-  const folder = getDestinationFolder(rangename)
-  set()
-  setURL(getRangeByName(rangename), folder.getUrl(), folder.getName())
-}
-
-/**
- * Prints links to all folders in the spreadsheet.
- * @returns {void}
- */
-function printAllFoldersLinks(){
-  // Print folder links
-  const clientFolder = getDestinationFolder("clientFolder")
-  setURL(getRangeByName("clientFolder"), clientFolder.getUrl(), `Directorio madre: ${clientFolder.getName()}`)
-  printFolderLink("folder01")
-  printFolderLink("folder02")
-  printFolderLink("folder0200")
-  printFolderLink("folder0201")
-  printFolderLink("folder0202")
-  printFolderLink("folder0203")
-  printFolderLink("folder0204")
-  printFolderLink("folder0205")
-  printFolderLink("folder03")
-
-}

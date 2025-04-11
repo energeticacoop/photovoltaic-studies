@@ -36,8 +36,7 @@ function createMGEcertificate() {
       const file = destinationFolder.createFile(blob.setName(fileName))
 
       // Output link to document
-      setURL(getRangeByName("outputMGE"), file.getUrl(), "Certificado MGE")
-      SpreadsheetApp.flush()
+      setURL("outputMGE", file.getUrl(), "Certificado MGE")
 
       // Log the file URL
       Logger.log(`File URL: ${file.getUrl()}`)

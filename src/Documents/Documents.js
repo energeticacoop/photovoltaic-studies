@@ -132,11 +132,7 @@ function createDocuments(outputNamedRange) {
     const copy = createDocumentFromTemplate(template)
 
     // Output link to document
-    setURL(
-      SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación").getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()),
-      copy.getUrl(),
-      template.filename
-    )
+    // TODO: set URL 
     SpreadsheetApp.flush()
   })
 }
