@@ -1,5 +1,8 @@
+
 /**
  * Retrieves and validates a range's value(s) from the active spreadsheet.
+ *
+ * Supports single cell, single-column, or full matrix based on schema.
  *
  * @param {string} rangeName - The name of the named range.
  * @returns {*} The validated value(s) from the range.
@@ -16,16 +19,12 @@ function get(rangeName) {
   const validator = RangeSchemas[rangeName];
 
   if (!validator) {
-    throw new Error(`⚠️ No se ha definido un esquema de validación para el rango "${rangeName}".`);
+    throw new Error(`⚠️ No se ha definido un validador para el rango "${rangeName}".`);
   }
 
-  try {
-    validator(range);  // Perform the validation
-  } catch (error) {
-    throw new Error(`❌ Error en "${rangeName}": ${error.message}`);
-  }
+  const value = validator(range.getValues())
 
-  return range.getValue()
+  return value
 }
 
 
