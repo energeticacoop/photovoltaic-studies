@@ -35,9 +35,9 @@ function getClimateFile() {
 
   const tmyFile = downloadFile(tmyURL, tmyFilename, destinationFolder).file
   setURL(
-    SpreadsheetApp.getActiveSpreadsheet().getRangeByName(`tmyFileepw`),
+    "tmyFileepw",
     tmyFile.getUrl(),
-    `Fichero TMY en ${outputFormat.toUpperCase()}`)
+    tmyFileName)
   }
 
 
