@@ -3,10 +3,15 @@ const RangeSchemas = {
   tmyFileName: withCellShape(isNonEmptyString),
   selectedSelfConsumers: withMatrixShape(isBooleanMatrix),
   selfConsumersData: withMatrixShape(alwaysTrue),
-  "perfilREE2.0": withMatrixShape(isNumberMatrix),
-  "perfilREE3.0": withMatrixShape(isNumberMatrix),
+  "perfilREE2.0": withColumnShape(isNumberColumn),
+  "perfilREE3.0": withColumnShape(isNumberColumn),
   normalizedDates: withMatrixShape(isDateMatrix),
-  recurringDaily: withMatrixShape(isNumberMatrix),
+  recurringDaily: withColumnShape(isNumberColumn),
+  recurringMonthly: withMatrixShape(isNumberMatrix),
+  recurringWeekly: withMatrixShape(isNumberMatrix),
+  recurringSeasonal: withMatrixShape(isNumberMatrix),
+  isWeekendOrHoliday: withMatrixShape(isBooleanMatrix),
+  seasons: withMatrixShape(isNumberMatrix),
 };
 
 
@@ -37,8 +42,8 @@ function withColumnShape(validatorFn) {
     ) {
       throw new Error("Se esperaba una columna (array de arrays de un solo elemento).");
     }
-    const flat = values.map(v => v[0]);
-    return validatorFn(flat);
+    const column = values.map(v => v[0]);
+    return validatorFn(column);
   };
 }
 
@@ -76,19 +81,34 @@ function isBooleanMatrix(matrix) {
   if (!matrix.every(row => row.every(val => typeof val === "boolean"))) {
     throw new Error("Todos los valores deben ser booleanos.");
   }
-  return value;
+  return matrix;
 }
 
 function isNumberMatrix(matrix) {
-  if (
-    !matrix.every(row =>
-      row.every(val => typeof val === "number" || val === "" || val === null)
-    )
-  ) {
-    throw new Error("Todos los valores deben ser números o celdas vacías.");
+  if (!Array.isArray(matrix)){
+    throw new Error("El rango debe ser un array.")
   }
-  return value;
+
+  if (!matrix.every(row => 
+    Array.isArray(row) && 
+    row.every(val => typeof val === "number" || val === "" || val === null)
+  )){
+      throw new Error("Todos los valores deben ser números.");
+  }
+  return matrix
 }
+
+function isNumberColumn(column) {
+  if (!Array.isArray(column)){
+    throw new Error("El rango debe ser un array.")
+  }
+
+  if (!column.every(val => typeof val === "number" || val === "" || val === null)){
+      throw new Error("Todos los valores deben ser números.");
+  }
+  return column
+}
+
 
 function isDateMatrix(matrix) {
   if (
@@ -101,10 +121,9 @@ function isDateMatrix(matrix) {
   ) {
     throw new Error("Todos los valores deben ser fechas válidas.");
   }
-  return value;
+  return matrix;
 }
 
 function alwaysTrue(value) {
   return value;
 }
-
