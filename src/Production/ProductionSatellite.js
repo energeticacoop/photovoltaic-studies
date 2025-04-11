@@ -17,7 +17,7 @@ function getSatelliteImages() {
   const mapType = "satellite";
 
   let lastFileName = "";
-  const satelliteImages = new Array(4).fill("");
+  const satelliteImagesUrls = new Array(4).fill("");
   const scales = new Array(4).fill("");
   const imagesTexts = new Array(4).fill("");
 
@@ -59,7 +59,7 @@ function getSatelliteImages() {
 
   // Set the retrieved data (Satellite Images and Scales)
   for (let zoom = minZoom; zoom < maxZoom + 1; zoom++){
-    setURL("satellite" + zoom.toString(), satelliteImages[zoom - minZoom], imagesTexts[zoom -minZoom])
+    setURL("satellite" + zoom.toString(), satelliteImagesUrls[zoom - minZoom], imagesTexts[zoom -minZoom])
   }
   set("scales", scales);  // Set the scales for the images
 }
