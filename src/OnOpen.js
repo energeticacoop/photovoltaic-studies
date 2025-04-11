@@ -10,7 +10,7 @@ function onOpen() {
     .addItem("🗺️ Calcular coordenadas UTM", "getUTMcoordinates")
     .addItem("📌 Obtener código postal", "getPostalCode")
     .addSeparator()
-    .addItem("⏬ Procesar todas las acciones de producción", "processSAMdata")
+    .addItem("⏬ Procesar todas las acciones de producción", "processProduction")
     .addToUi()
 
   ui
