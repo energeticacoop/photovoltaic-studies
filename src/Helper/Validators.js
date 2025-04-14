@@ -38,7 +38,7 @@ const RangeSchemas = {
   monthlyPowerCost: withColumnShape(isNumberColumn),
   monthlyRegulatedCosts: withColumnShape(isNumberColumn),
   monthlyBillBeforeFlux: withColumnShape(isNumberColumn),
-
+  templates: withMatrixShape(alwaysTrue),
 }
 
 
