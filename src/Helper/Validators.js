@@ -32,6 +32,13 @@ const RangeSchemas = {
   hourlyTariff20: withColumnShape(isNumberColumn),
   hourlyTariff30: withColumnShape(isNumberColumn),
   hourlyTariff61: withColumnShape(isNumberColumn),
+  fluxCoefficient: withCellShape(isNumberCell),
+  monthlyEnergyTermsAfterPVwithLimitlessCompensation: withColumnShape(isNumberColumn),
+  monthlyEnergyTermsAfterPVwithCompensation: withColumnShape(isNumberColumn),
+  monthlyPowerCost: withColumnShape(isNumberColumn),
+  monthlyRegulatedCosts: withColumnShape(isNumberColumn),
+  monthlyBillBeforeFlux: withColumnShape(isNumberColumn),
+
 }
 
 

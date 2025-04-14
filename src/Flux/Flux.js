@@ -6,7 +6,6 @@
 function processFluxSolar() {
   
   // Retrieve initial values from sheet
-  const totalBillBefore = get("totalBillBefore")  // Total bill before compensation
   const fluxCoefficient = get("fluxCoefficient")  // Coefficient for "Flux Solar" conversion
   const monthlyEnergyTermsAfterPVwithLimitlessCompensation = get("monthlyEnergyTermsAfterPVwithLimitlessCompensation")  // Energy terms after limitless compensation
   
