@@ -33,39 +33,3 @@ function getDestinationFolder(destinationFolderName) {
       return folder03
   }
 }
-
-/**
- * Clears content from specific ranges in the spreadsheet.
- * @returns {void}
- */
-function forgetFolders() {
-
-  const erasableRangesDocumentation = [
-    "clientFolder",
-    "outputStudy",
-    "adminFolder",
-    "outputGuide",
-    "output00Folder",
-    "output01Folder",
-    "output02Folder",
-    "output03Folder",
-    "output04Folder",
-    "outputMemoryOrProject",
-    "outputBill",
-    "folder01",
-    "folder02",
-    "folder0200",
-    "folder0201",
-    "folder0202",
-    "folder0203",
-    "folder0204",
-    "folder0205",
-    "folder03",
-    "outputMGE",
-  ]
-
-  SpreadsheetApp.getActiveSpreadsheet().getNamedRanges().forEach((range) => {
-    if (erasableRangesDocumentation.includes(range.getName()))
-      range.getRange().clearContent()
-  })
-}

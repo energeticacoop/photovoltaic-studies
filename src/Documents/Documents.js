@@ -123,19 +123,24 @@ function createDocuments(outputNamedRange) {
   const templates = createTemplatesArray(outputNamedRange)
   
   // Clear output range
+  const outputRange = getRangeByName(outputNamedRange)
   clearRange(outputNamedRange)
 
   // Replace values in all templates
-  templates.forEach(template => {
+  templates.forEach((template, templateIndex) => {
 
     // Create document and replace values
     const copy = createDocumentFromTemplate(template)
 
     // Output link to document
-    setURL(outputNamedRange, copy.getUrl(), template.filename)
+    const nextNamedRangeName = "next"
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación")
+    SpreadsheetApp.getActiveSpreadsheet().setNamedRange(nextNamedRangeName, sheet.getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()))
+    setURL(nextNamedRangeName, copy.getUrl(), template.filename
+    )
+    SpreadsheetApp.flush()
   })
 }
-
 
 
 /**
