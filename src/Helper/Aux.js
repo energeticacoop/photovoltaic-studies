@@ -99,5 +99,3 @@ function importDb() {
   set("fechaImportacion", new Date())
 
 }
-
-// Hola, Carlos

@@ -113,6 +113,7 @@ function createTestDocument() {
   createDocuments("test")
 }
 
+
 /**
  * Creates documents from templates.
  * @param {string} outputNamedRange - Name of the output range.
@@ -122,21 +123,18 @@ function createDocuments(outputNamedRange) {
   const templates = createTemplatesArray(outputNamedRange)
   
   // Clear output range
-  const outputRange = getRangeByName(outputNamedRange)
   clearRange(outputNamedRange)
 
   // Replace values in all templates
-  templates.forEach((template, templateIndex) => {
+  templates.forEach(template => {
 
     // Create document and replace values
     const copy = createDocumentFromTemplate(template)
 
     // Output link to document
-    // TODO: set URL 
-    SpreadsheetApp.flush()
+    setURL(outputNamedRange, copy.getUrl(), template.filename)
   })
 }
-
 
 
 
@@ -171,12 +169,10 @@ function createDocumentFromTemplate(template) {
     var newDocId = copy.getId()
     var commentList = Drive.Comments.list(templateId, { 'maxResults': 100 })
     commentList.items.forEach(item => {
-      //if (!item.status == "resolved") {
       var replies = item.replies
       delete item.replies
       var commentId = Drive.Comments.insert(item, newDocId).commentId
       replies.forEach(reply => Drive.Replies.insert(reply, newDocId, commentId))
-      //}
     })
   }
 
