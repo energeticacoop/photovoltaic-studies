@@ -32,8 +32,6 @@ function onOpen() {
 
   ui
     .createMenu("📚 Documentación")
-    .addItem("📂 Generar enlaces a directorios de documentación", "printAllFoldersLinks")
-    .addSeparator()
     .addItem("📗 Generar estudio definitivo", "createFinalStudy")
     .addItem("📙 Generar documentación para firma", "create00FolderDocumentation")
     .addItem("📙 Generar documentación DROU", "create01FolderDocumentation")
