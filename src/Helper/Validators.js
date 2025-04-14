@@ -13,6 +13,8 @@ const RangeSchemas = {
   isWeekendOrHoliday: withMatrixShape(isBooleanMatrix),
   seasons: withMatrixShape(isNumberMatrix),
   ASHPconsumption: withCellShape(isNumberCell),
+  ASHPcurveName: withCellShape(isNonEmptyString),
+  ashpCurvesHeaders: withMatrixShape(isNonEmptyString),
   ASHPcurves: withMatrixShape(isNumberMatrix),
   SAVEgridUsage: withMatrixShape(isBooleanMatrix),
   SAVEseasonsKm: withMatrixShape(isNumberMatrix),
@@ -20,7 +22,7 @@ const RangeSchemas = {
   SAVEconsumptionPer100Km: withCellShape(isNumberCell),
   maxSAVEpower: withCellShape(isNumberCell),
   saveType: withCellShape(isNonEmptyString),
-  
+
 };
 
 
@@ -32,9 +34,8 @@ const RangeSchemas = {
 function withCellShape(validatorFn) {
   return function(value) {
     if (Array.isArray(value)) {
-      // Extra protection: flattening accidental getValues() misuse
-      if (value.length === 1 && Array.isArray(value[0]) && value[0].length === 1) {
-        value = value[0][0]; // Extract the raw value
+      if (value.length === 1 && Array.isArray(value[0])) {
+        value = value[0][0]
       } else {
         throw new Error("Se esperaba una celda (valor único).");
       }
