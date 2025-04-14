@@ -17,12 +17,11 @@ function get(rangeName) {
   }
 
   const validator = RangeSchemas[rangeName];
+  const rawValues = range.getValues();
 
   if (!validator) {
-    throw new Error(`⚠️ No se ha definido un validador para el rango "${rangeName}".`);
+    return rawValues
   }
-
-  const rawValues = range.getValues();
 
   try {
     const result = validator(rawValues);
