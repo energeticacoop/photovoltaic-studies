@@ -29,30 +29,40 @@ This automation significantly reduces the time spent on manual calculations and 
    node -v
    ```
 
-## 🧑‍💻 Preferred Workflow
+## 🧑‍💻 Preferred Development Workflow
 
-1. **Create a feature branch from `dev`:**
+1. **Work directly on the `dev` branch:**
 
    ```bash
    git checkout dev
    git pull origin dev
-   git checkout -b feature/my-new-feature
    ```
 
-2. **Push changes to `dev`:**
+2. **Make your changes locally and commit them:**
 
    ```bash
-   git push origin feature/my-new-feature
+   git commit -am "Your descriptive commit message"
    ```
 
-3. **Create a PR to `dev` or `main` on GitHub.**
+3. **Push your changes to the `dev` branch:**
+
+   ```bash
+   git push origin dev
+   ```
+
+   This will automatically deploy to the **dev Google Sheet** for testing.
+
+4. **Test and verify your changes in the dev environment.**
+
+5. **Once everything looks good, open a Pull Request from `dev` → `main`.**  
+   Merging to `main` will trigger deployment to the **production Google Sheet**.
 
 ## 🚀 Deployment Workflow
 
-- **Push to `dev` →** Runs tests and deploys to the **dev Google Sheet**.
-- **Push to `main` →** Runs tests and deploys to the **prod Google Sheet**.
+- **Push to `dev`** → Automatically deploys to the **dev Google Sheet**.
+- **Merge to `main`** → Automatically deploys to the **prod Google Sheet**.
 
-The deployment to Google Sheets is managed using [**clasp**](https://github.com/google/clasp), a command-line tool for managing Google Apps Script projects. The workflows are set up to automatically deploy the code to the correct environment (either `dev` or `prod`) after successful tests.
+Deployments are powered by [**clasp**](https://github.com/google/clasp), which integrates with CI/CD workflows to handle publishing to the correct environment.
 
 ## 🧪 Testing with Mocha
 
