@@ -83,7 +83,7 @@ function importDb() {
     const dataRange = ss.getDataRange()
 
     // get the data values in range
-    const dataValues = dataRange.get()
+    const dataValues = dataRange.getValues()
 
     // target sheet
     const targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName)
