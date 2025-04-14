@@ -6,13 +6,12 @@
 function processFluxSolar() {
   
   // Retrieve initial values from sheet
-  const totalBillBefore = getValue("totalBillBefore")  // Total bill before compensation
-  const fluxCoefficient = getValue("fluxCoefficient")  // Coefficient for "Flux Solar" conversion
-  const monthlyEnergyTermsAfterPVwithLimitlessCompensation = getColumn("monthlyEnergyTermsAfterPVwithLimitlessCompensation")  // Energy terms after limitless compensation
+  const fluxCoefficient = get("fluxCoefficient")  // Coefficient for "Flux Solar" conversion
+  const monthlyEnergyTermsAfterPVwithLimitlessCompensation = get("monthlyEnergyTermsAfterPVwithLimitlessCompensation")  // Energy terms after limitless compensation
   
-  const monthlyEnergyTermsAfterPVwithCompensation = getColumn("monthlyEnergyTermsAfterPVwithCompensation")
-  const monthlyPowerCost = getColumn("monthlyPowerCost")
-  const monthlyRegulatedCosts =getColumn("monthlyRegulatedCosts")
+  const monthlyEnergyTermsAfterPVwithCompensation = get("monthlyEnergyTermsAfterPVwithCompensation")
+  const monthlyPowerCost = get("monthlyPowerCost")
+  const monthlyRegulatedCosts =get("monthlyRegulatedCosts")
   const monthlyBillBeforeFlux = monthlyEnergyTermsAfterPVwithCompensation.map((e, index)=> e + monthlyPowerCost[index] + monthlyRegulatedCosts[index])
 
   // Calculate the monthly soles input by subtracting limitless compensation and applying the flux coefficient
@@ -70,7 +69,7 @@ function processFluxSolar() {
   }
 
   // Store the results in the sheet
-  setColumn("monthlyBillFlux", currentBill)
+  set("monthlyBillFlux", currentBill)
 }
 
 /**

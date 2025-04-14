@@ -31,13 +31,12 @@ function createMGEcertificate() {
       const destinationFolder = getDestinationFolder("folder0205")
 
       // Create a file in the same folder with a specific name
-      const fileName = `${getValue("nombreCompletoPromotor")} - Certificado MGE.pdf`
+      const fileName = `${get("nombreCompletoPromotor")} - Certificado MGE.pdf`
       Tools.deleteFile(fileName, destinationFolder)
       const file = destinationFolder.createFile(blob.setName(fileName))
 
       // Output link to document
-      setURL(getRangeByName("outputMGE"), file.getUrl(), "Certificado MGE")
-      SpreadsheetApp.flush()
+      setURL("outputMGE", file.getUrl(), "Certificado MGE")
 
       // Log the file URL
       Logger.log(`File URL: ${file.getUrl()}`)

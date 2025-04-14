@@ -432,7 +432,7 @@ function normalizeElectricLoadCurve(dates, values) {
   )
 
   // Construct the normalized values array based on the yearDates 
-  const normalizedDates = getColumn("normalizedDates").map(e => new Date(e))
+  const normalizedDates = get("normalizedDates").map(e => new Date(e))
   const normalizedValues = normalizedDates.map(date => {
     const month = getMonth(date)
     const hour = getHour(date)

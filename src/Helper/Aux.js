@@ -96,8 +96,6 @@ function importDb() {
   })
 
   // Set importation date to current date
-  setValue("fechaImportacion", new Date())
+  set("fechaImportacion", new Date())
 
 }
-
-// Hola, Carlos

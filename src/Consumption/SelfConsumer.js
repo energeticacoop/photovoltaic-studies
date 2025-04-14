@@ -21,7 +21,7 @@ class SelfConsumer {
    * Fields are dynamically created as properties on the SelfConsumer instance.
    */
   initializeFields() {
-    const data = getValues("selfConsumersData")
+    const data = get("selfConsumersData")
 
     data.forEach(row => {
       const fieldName = row[0] // Field name is in the first column
@@ -126,13 +126,13 @@ clearLoadCurve(headingNamedRange) {
 
     switch (loadCurveOrigin) {
       case "Perfil REE 2.0TD":
-        const profileREE20 = getValues("perfilREE2.0")
+        const profileREE20 = get("perfilREE2.0")
         const loadCurveREE20 = new LoadCurveValues(...profileREE20.map(entry => Number(entry) * annualConsumption))
         this.setLoadCurve("cchConventional", loadCurveREE20)
         break
 
       case "Perfil REE 3.0TD":
-        const profileREE30 = getValues("perfilREE3.0")
+        const profileREE30 = get("perfilREE3.0")
         const loadCurveREE30 = new LoadCurveValues(...profileREE30.map(entry => Number(entry) * annualConsumption))
         this.setLoadCurve("cchConventional", loadCurveREE30)
         break
@@ -152,7 +152,7 @@ clearLoadCurve(headingNamedRange) {
         }
         catch (e) {
           // Set error response in "Respuesta API Datadis" cell for this Self Consumer
-          datadisResponseCell.setValue(e)
+          datadisResponseCell.set(e)
         }
         break
       default:
@@ -166,13 +166,13 @@ clearLoadCurve(headingNamedRange) {
    * Outputs the recurring load curve to the sheet.
    */
   processRecurringLoadCurve() {
-    const dates = getColumn("normalizedDates").map(e => new Date(e))
-    const recurringDaily = getColumn("recurringDaily")
-    const recurringMonthly = getValues("recurringMonthly")
-    const recurringWeekly = getValues("recurringWeekly")
-    const recurringSeasonal = getValues("recurringSeasonal")
-    const isWeekendOrHoliday = getColumn("isWeekendOrHoliday")
-    const seasons = getColumn("seasons")
+    const dates = get("normalizedDates").map(e => new Date(e))
+    const recurringDaily = get("recurringDaily")
+    const recurringMonthly = get("recurringMonthly")
+    const recurringWeekly = get("recurringWeekly")
+    const recurringSeasonal = get("recurringSeasonal")
+    const isWeekendOrHoliday = get("isWeekendOrHoliday")
+    const seasons = get("seasons")
 
     const recurringLoadCurve = dates.map(
       (date, index) =>
@@ -196,11 +196,11 @@ clearLoadCurve(headingNamedRange) {
    * Generates the ASHP load curve and updates the sheet.
    */
   processASHPLoadCurve() {
-    const ashpConsumption = getValue("ASHPconsumption")
-    const ashpCurveName = getValue("ASHPcurveName")
+    const ashpConsumption = get("ASHPconsumption")
+    const ashpCurveName = get("ASHPcurveName")
 
-    const ashpCurvesHeaders = getValues("ashpCurvesHeaders")[0]
-    const ashpCurves = getValues("ASHPcurves")
+    const ashpCurvesHeaders = get("ashpCurvesHeaders")[0]
+    const ashpCurves = get("ASHPcurves")
     const ashpIndex = ashpCurvesHeaders.indexOf(ashpCurveName)
 
     const ashpLoadCurve = ashpCurves.map(row => (row[ashpIndex] || 0) * (ashpConsumption || 0))
@@ -216,17 +216,17 @@ clearLoadCurve(headingNamedRange) {
    * Constructs and updates the SAVE load curve based on charge and discharge patterns.
    */
   processSAVELoadCurve() {
-    const dates = getColumn("normalizedDates").map(dateString => new Date(dateString))
-    const gridUsage = getValues("SAVEgridUsage")
-    const seasonsKm = getValues("SAVEseasonsKm")[0]
-    const batteryCapacity = getValue("SAVEbatteryCapacity")
-    const consumptionPerKm = getValue("SAVEconsumptionPer100Km") / 100
-    const maxSAVEpower = getValue("maxSAVEpower")
-    const saveType = getValue("saveType")
-    const normalizedPowersOrbis = getValues("normalizedPowersOrbis")
-    const normalizedPowersFronius = getValues("normalizedPowersFronius")
-    const isWeekendOrHoliday = getColumn("isWeekendOrHoliday")
-    const seasons = getColumn("seasons")
+    const dates = get("normalizedDates").map(dateString => new Date(dateString))
+    const gridUsage = get("SAVEgridUsage")
+    const seasonsKm = get("SAVEseasonsKm")[0]
+    const batteryCapacity = get("SAVEbatteryCapacity")
+    const consumptionPerKm = get("SAVEconsumptionPer100Km") / 100
+    const maxSAVEpower = get("maxSAVEpower")
+    const saveType = get("saveType")
+    const normalizedPowersOrbis = get("normalizedPowersOrbis")
+    const normalizedPowersFronius = get("normalizedPowersFronius")
+    const isWeekendOrHoliday = get("isWeekendOrHoliday")
+    const seasons = get("seasons")
 
 
     // Compute charge availability curve
@@ -267,8 +267,8 @@ clearLoadCurve(headingNamedRange) {
     const partialCCH = conventionalCCH.map(
       (e, index) => e + recurringCCH[index] + ashpCCH[index]
     )
-    const beta = getColumn("chosenBetas")[this.selfConsumerIndex - 1] 
-    const production = getColumn("normalizedProduction").map(value => value * beta)
+    const beta = get("chosenBetas")[this.selfConsumerIndex - 1] 
+    const production = get("normalizedProduction").map(value => value * beta)
     const partialSurplus = partialCCH.map((e, index) =>
       Math.max(0, production[index] - e)
     )
@@ -307,10 +307,10 @@ clearLoadCurve(headingNamedRange) {
     let batteryNegativeOccurrences = 0
     const tariff = this["Peaje de acceso"]
     const tariffPeriods = tariff == "2.0TD"
-      ? getColumn("tariffPeriods20")
+      ? get("tariffPeriods20")
       : tariff == "3.0TD"
-        ? getColumn("tariffPeriods30")
-        : getColumn("tariffPeriods61")
+        ? get("tariffPeriods30")
+        : get("tariffPeriods61")
 
     const saveCCH = new Array(8760)
     batteryUsage.forEach((hourlyLoad, index) => {
@@ -350,7 +350,7 @@ clearLoadCurve(headingNamedRange) {
     this.setLoadCurve("cchSAVE", saveLoadCurveValues)
 
     // Log battery energy deficit information
-    setValue("batteryNegativeEnergy", batteryNegativeEnergy)
-    setValue("batteryNegativeOccurrences", batteryNegativeOccurrences)
+    set("batteryNegativeEnergy", batteryNegativeEnergy)
+    set("batteryNegativeOccurrences", batteryNegativeOccurrences)
   }
 }

@@ -23,8 +23,8 @@ function create01FolderDocumentation() {
  * Creates the memory or project and guide documents.
  */
 function createMemoryOrProjectAndGuide() {
-  const label = getValue("withProjectLabel")
-  if (getValue("withproject")) {
+  const label = get("withProjectLabel")
+  if (get("withproject")) {
     Tools.showMessage("Generación de documentación", `La casilla "${label}" de la pestaña "Documentación" está marcada. Se generará proyecto de instalación.`)
     createDocuments("outputProject")
   } else {
@@ -54,10 +54,10 @@ function create02And03FolderDocumentation() {
  * Creates the documentation for the 04 folder.
  */
 function create04FolderDocumentation() {
-  if (getValue("withproject")) {
+  if (get("withproject")) {
     createDocuments("output04Folder")
   } else {
-    const label = getValue("withProjectLabel")
+    const label = get("withProjectLabel")
     Tools.showMessage("Generación de documentación", SpreadsheetApp.getUi().alert(`La casilla "${label}" de la pestaña "Documentación" no está marcada. No se generará ningún documento.`))
   }
 }
@@ -113,6 +113,7 @@ function createTestDocument() {
   createDocuments("test")
 }
 
+
 /**
  * Creates documents from templates.
  * @param {string} outputNamedRange - Name of the output range.
@@ -132,16 +133,14 @@ function createDocuments(outputNamedRange) {
     const copy = createDocumentFromTemplate(template)
 
     // Output link to document
-    setURL(
-      SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación").getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()),
-      copy.getUrl(),
-      template.filename
+    const nextNamedRangeName = "next"
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación")
+    SpreadsheetApp.getActiveSpreadsheet().setNamedRange(nextNamedRangeName, sheet.getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()))
+    setURL(nextNamedRangeName, copy.getUrl(), template.filename
     )
     SpreadsheetApp.flush()
   })
 }
-
-
 
 
 /**
@@ -175,12 +174,10 @@ function createDocumentFromTemplate(template) {
     var newDocId = copy.getId()
     var commentList = Drive.Comments.list(templateId, { 'maxResults': 100 })
     commentList.items.forEach(item => {
-      //if (!item.status == "resolved") {
       var replies = item.replies
       delete item.replies
       var commentId = Drive.Comments.insert(item, newDocId).commentId
       replies.forEach(reply => Drive.Replies.insert(reply, newDocId, commentId))
-      //}
     })
   }
 
@@ -194,7 +191,7 @@ function createDocumentFromTemplate(template) {
     // Replace signature images
     const signatureText = "<firmaIngeniera>"
     if (doc.getBody().findText(signatureText) != null) {
-      const signature = DriveApp.getFileById(getValue("firmaIngeniera")).getBlob()
+      const signature = DriveApp.getFileById(get("firmaIngeniera")).getBlob()
       replaceImage(doc, signatureText, signature, 300)
     }
 
@@ -261,7 +258,7 @@ function createDocumentFromTemplate(template) {
 
     // Get patterns to be replaced
     const textFinder = excel.createTextFinder(searchPattern).useRegularExpression(true)
-    const allMatches = textFinder.findAll().map(e => e.getValue())
+    const allMatches = textFinder.findAll().map(e => e.get())
     const replacementValues = []
     allMatches.forEach(row => {
       replacementValues.push(...[...row.toString().matchAll(searchPattern)].map(e => e[0]))
@@ -273,7 +270,7 @@ function createDocumentFromTemplate(template) {
       const namedRangeName = value.split(leftDelimiter).pop().split(rightDelimiter)[0]
       const namedRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(namedRangeName)
       if (namedRange != null) {
-        textFinder.replaceAllWith(getValue(namedRangeName))
+        textFinder.replaceAllWith(get(namedRangeName))
       }
     })
 

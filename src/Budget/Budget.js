@@ -5,7 +5,7 @@ function populateBudget() {
 
   // Get chosen installation size and default budget
   const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const installationType = ss.getRangeByName("installationSize").getValue()
+  const installationType = ss.getRangeByName("installationSize").getValues()
   const sourceSheet = ss.getSheetByName(installationType)
   const destinationSheet = ss.getSheetByName('Presupuesto')
 

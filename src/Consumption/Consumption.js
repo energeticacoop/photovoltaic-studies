@@ -5,7 +5,7 @@
  * @param {string} methodName - The name of the method to call on the SelfConsumer instance ('processConventionalLoadCurve', 'processRecurringLoadCurve', 'processASHPLoadCurve', 'processSAVELoadCurve').
  */
 function processLoadCurve(methodName) {
-  const selectedSelfConsumers = getValues("selectedSelfConsumers")[0]
+  const selectedSelfConsumers = get("selectedSelfConsumers")[0]
   selectedSelfConsumers.forEach((isSelected, index) => {
     if (isSelected) {
 

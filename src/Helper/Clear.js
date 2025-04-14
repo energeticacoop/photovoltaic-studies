@@ -20,7 +20,7 @@ function clearGreenCells() {
   const sheetName = sheet.getName() // Get the name of the current sheet
   const maxRows = Math.min(100, sheet.getMaxRows()) // Get the lesser of 100 or the total number of rows
   const range = sheet.getRange(1, 1, maxRows, sheet.getMaxColumns()) // Get the range for the first 100 rows or fewer
-  const values = range.getValues() // Get the values of the specified range
+  const values = range.get() // Get the values of the specified range
   const formulas = range.getFormulas() // Get the formulas of the specified range
   const backgrounds = range.getBackgrounds() // Get the background colors of the specified range
 
@@ -51,7 +51,7 @@ function clearGreenCells() {
 
 
 function clearLoadCurves() {
-  const selectedSelfConsumers = getValues("selectedSelfConsumers")[0]
+  const selectedSelfConsumers = get("selectedSelfConsumers")[0]
   selectedSelfConsumers.forEach((isSelected, index) => {
     if (isSelected) {
 

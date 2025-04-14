@@ -5,16 +5,16 @@
 function createTariffPeriods() {
   const tariff = "6.1TD"
   const rangeName = "tariffPeriods61"
-  const dates = getValues("normalizedDates").map(dateString => new Date(dateString))
-  const nationalHolidays = getValues("nationalHolidays").map(dateString => new Date(dateString))
+  const dates = get("normalizedDates").map(dateString => new Date(dateString))
+  const nationalHolidays = get("nationalHolidays").map(dateString => new Date(dateString))
   const tariffPeriod = dates.map(date => getTariffPeriod(date, tariff, nationalHolidays))
-  setColumn(rangeName, tariffPeriod)
+  set(rangeName, tariffPeriod)
 
 }
 
 function createDates() {
-  const dates = getValues("normalizedDates").map(dateString => new Date(dateString))
-  setColumn("dates", dates)
+  const dates = get("normalizedDates").map(dateString => new Date(dateString))
+  set("dates", dates)
 
 }
 
@@ -116,10 +116,10 @@ function isWeekendOrNationalHoliday(date, nationalHolidays) {
 }
 
 function populateHolidays(){
-  const dates = getColumn("normalizedDates").map(string => new Date(string))
-  const nationalHolidays = getColumn("nationalHolidays")
+  const dates = get("normalizedDates").map(string => new Date(string))
+  const nationalHolidays = get("nationalHolidays")
   const weekends = dates.map(date => isWeekendOrNationalHoliday(date, nationalHolidays))
-  setColumn("isWeekendOrHoliday", weekends)
+  set("isWeekendOrHoliday", weekends)
 }
 
 
@@ -153,7 +153,7 @@ function getSeason(date) {
 }
 
 function populateSeasons(){
-  const dates = getColumn("normalizedDates").map(string => new Date(string))
+  const dates = get("normalizedDates").map(string => new Date(string))
   const seasons = dates.map(date => getSeason(date))
-  setColumn("seasons", seasons)
+  set("seasons", seasons)
 }
