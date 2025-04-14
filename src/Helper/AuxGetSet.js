@@ -22,9 +22,14 @@ function get(rangeName) {
     throw new Error(`⚠️ No se ha definido un validador para el rango "${rangeName}".`);
   }
 
-  const value = validator(range.getValues())
+  const rawValues = range.getValues();
 
-  return value
+  try {
+    const result = validator(rawValues);
+    return result;
+  } catch (e) {
+    throw new Error(`❌ Error al validar el rango "${rangeName}": ${e.message}`);
+  }
 }
 
 

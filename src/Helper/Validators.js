@@ -19,7 +19,8 @@ const RangeSchemas = {
   SAVEbatteryCapacity: withCellShape(isNumberCell),
   SAVEconsumptionPer100Km: withCellShape(isNumberCell),
   maxSAVEpower: withCellShape(isNumberCell),
-
+  saveType: withCellShape(isNonEmptyString),
+  
 };
 
 
