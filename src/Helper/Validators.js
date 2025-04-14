@@ -14,7 +14,7 @@ const RangeSchemas = {
   seasons: withMatrixShape(isNumberMatrix),
   ASHPconsumption: withCellShape(isNumberCell),
   ASHPcurveName: withCellShape(isNonEmptyString),
-  ashpCurvesHeaders: withMatrixShape(isNonEmptyString),
+  ashpCurvesHeaders: withMatrixShape(isNonEmptyStringMatrix),
   ASHPcurves: withMatrixShape(isNumberMatrix),
   SAVEgridUsage: withMatrixShape(isBooleanMatrix),
   SAVEseasonsKm: withMatrixShape(isNumberMatrix),
@@ -22,8 +22,10 @@ const RangeSchemas = {
   SAVEconsumptionPer100Km: withCellShape(isNumberCell),
   maxSAVEpower: withCellShape(isNumberCell),
   saveType: withCellShape(isNonEmptyString),
-
-};
+  normalizedPowersOrbis: withMatrixShape(isNumberMatrix),
+  normalizedPowersFronius: withMatrixShape(isNumberMatrix),
+  chosenBetas: withMatrixShape(isBooleanMatrix),
+}
 
 
 
@@ -86,6 +88,15 @@ function isNonEmptyString(value) {
   }
   return value
 }
+
+function isNonEmptyStringMatrix(matrix) {
+  if (!matrix.every(row => row.every(val => typeof val === "string" || val.trim() === "")
+  )){
+      throw new Error("Todos los valores deben ser cadenas de texto no vacías.");
+  }
+  return matrix
+}
+
 
 function isBooleanMatrix(matrix) {
   if (!matrix.every(row => row.every(val => typeof val === "boolean"))) {
