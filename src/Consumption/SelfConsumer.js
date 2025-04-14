@@ -103,7 +103,7 @@ clearLoadCurve(headingNamedRange) {
 
     if (loadCurveRange) {
       // Read the values from the sheet and convert them to a 1D array
-      const values = loadCurveRange.getValue().flat().map(value => Number(value))
+      const values = loadCurveRange.getValues().flat().map(value => Number(value))
 
       // Return a LoadCurveValues object constructed from the values
       return new LoadCurveValues(...values)

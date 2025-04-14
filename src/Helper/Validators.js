@@ -24,7 +24,14 @@ const RangeSchemas = {
   saveType: withCellShape(isNonEmptyString),
   normalizedPowersOrbis: withMatrixShape(isNumberMatrix),
   normalizedPowersFronius: withMatrixShape(isNumberMatrix),
-  chosenBetas: withMatrixShape(isBooleanMatrix),
+  chosenBetas: withColumnShape(isNumberColumn),
+  normalizedProduction: withColumnShape(isNumberColumn),
+  tariffPeriods20: withColumnShape(isNumberColumn),
+  tarrifPeriods30: withColumnShape(isNumberColumn),
+  tariffPeriods61: withColumnShape(isNumberColumn),
+  hourlyTariff20: withColumnShape(isNumberColumn),
+  hourlyTariff30: withColumnShape(isNumberColumn),
+  hourlyTariff61: withColumnShape(isNumberColumn),
 }
 
 
