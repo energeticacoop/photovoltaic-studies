@@ -12,6 +12,14 @@ const RangeSchemas = {
   recurringSeasonal: withMatrixShape(isNumberMatrix),
   isWeekendOrHoliday: withMatrixShape(isBooleanMatrix),
   seasons: withMatrixShape(isNumberMatrix),
+  ASHPconsumption: withCellShape(isNumberCell),
+  ASHPcurves: withMatrixShape(isNumberMatrix),
+  SAVEgridUsage: withMatrixShape(isBooleanMatrix),
+  SAVEseasonsKm: withMatrixShape(isNumberMatrix),
+  SAVEbatteryCapacity: withCellShape(isNumberCell),
+  SAVEconsumptionPer100Km: withCellShape(isNumberCell),
+  maxSAVEpower: withCellShape(isNumberCell),
+
 };
 
 
@@ -72,7 +80,7 @@ function isCoordinatePair(value) {
 
 function isNonEmptyString(value) {
   if (typeof value !== "string" || value.trim() === "") {
-    throw new Error("Se esperaba una cadena no vacía.");
+    throw new Error("Se esperaba una cadena de texto no vacía.");
   }
   return value
 }
@@ -81,33 +89,33 @@ function isBooleanMatrix(matrix) {
   if (!matrix.every(row => row.every(val => typeof val === "boolean"))) {
     throw new Error("Todos los valores deben ser booleanos.");
   }
-  return matrix;
+  return matrix
+}
+
+
+
+function isNumberCell(value) {
+  if (typeof value !== "number") {
+    throw new Error("Se esperaba un número.")
+  }
+  return value
+}
+
+function isNumberColumn(column) {
+  if (!column.every(val => typeof val === "number" || val === "" || val === null)){
+      throw new Error("Todos los valores deben ser números.");
+  }
+  return column
 }
 
 function isNumberMatrix(matrix) {
-  if (!Array.isArray(matrix)){
-    throw new Error("El rango debe ser un array.")
-  }
-
-  if (!matrix.every(row => 
-    Array.isArray(row) && 
-    row.every(val => typeof val === "number" || val === "" || val === null)
+  if (!matrix.every(row => row.every(val => typeof val === "number" || val === "" || val === null)
   )){
       throw new Error("Todos los valores deben ser números.");
   }
   return matrix
 }
 
-function isNumberColumn(column) {
-  if (!Array.isArray(column)){
-    throw new Error("El rango debe ser un array.")
-  }
-
-  if (!column.every(val => typeof val === "number" || val === "" || val === null)){
-      throw new Error("Todos los valores deben ser números.");
-  }
-  return column
-}
 
 
 function isDateMatrix(matrix) {
