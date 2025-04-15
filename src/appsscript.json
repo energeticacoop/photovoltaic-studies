@@ -15,14 +15,5 @@
   },
   "exceptionLogging": "STACKDRIVER",
   "oauthScopes": ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/script.external_request", "https://www.googleapis.com/auth/documents", "https://www.googleapis.com/auth/presentations"],
-  "runtimeVersion": "V8",
-  "sheets": {
-    "macros": [{
-      "menuName": "Borrar output producción",
-      "functionName": "Borraroutputproduccion"
-    }, {
-      "menuName": "Borrar output consumo convencional",
-      "functionName": "Borraroutputconsumoconvencional"
-    }]
-  }
+  "runtimeVersion": "V8"
 }
