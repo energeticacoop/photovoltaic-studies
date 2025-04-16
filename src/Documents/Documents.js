@@ -129,18 +129,18 @@ function createDocuments(outputNamedRange) {
   // Replace values in all templates
   templates.forEach((template, templateIndex) => {
 
-    // Manage additional actions for templates with special tables
+    // Manage additional actions for templates with special type
     const templateHandlers = {
-      "1Q7aRFNjqB_Kc9daRPDRhs2kqt7XuZMYmhGRQjLVHBY8": createPemAdditionalContents,
-      "1xttGTW5xY0mnyuCEU8gEQwQ926WH4vTG0mZS4CEKuJQ": createBillAdditionalContents,
-      "13ldY9Q8bK7ijZSauJYD2piVbyYfYKtTPjf7qdhWTE6k": createFinalStudyAdditionalContents,
-      "1k9lYTmxMsINC6U49w1NWOu0-3dGkYUBF5yrhKmkGb04": createInstallationGuideAdditionalContents,
-      "1SG2LSz9Hh-ds9R8RFUYhRjyx-KWhmjqyUzFea5kqIbI": createCELwithQuotaAdditionalContents,
-      "1BJOQIriXkyzu1gWUxJBv9yhwKQ9OdVZxgZJRoaxyaE8": createCELstudy,
-      "1Z99ZLph56eCyNmbsGeqXk9CmcIHGXgEYOspGgAxxs3M": createCELstudy
+      "Pem": createPemAdditionalContents,
+      "Bill": createBillAdditionalContents,
+      "FinalStudy": createFinalStudyAdditionalContents,
+      "InstallationGuide": createInstallationGuideAdditionalContents,
+      "CelSavings": createCELwithQuotaAdditionalContents,
+      "CelStudy": createCELstudy,
+      "CelStudy": createCELstudy
     };
 
-    const customHandlerFn = templateHandlers[template.templateId] || null
+    const customHandlerFn = templateHandlers[templates.templateType] || null
 
     // Create document and replace values
     const destinationFolder = getDestinationFolder(template.folder)
