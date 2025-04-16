@@ -35,7 +35,7 @@ function createDocumentFromTemplate(
   const copy = templateFile.makeCopy(filename, destinationFolder)
 
   const searchPattern = `${delimiters.left}.*?${delimiters.right}`
-  const signaturePattern = `${signatureDelimiters.left}${signatureNamedRange}${signatureDelimiters.right}`
+  const signaturePattern = `${signatureDelimiters.left}${SIGNATURE_NAMED_RANGE}${signatureDelimiters.right}`
 
   if (mimeType === MIME_TYPE_GOOGLE_DOC) {
     const doc = DocumentApp.openById(copy.getId())
