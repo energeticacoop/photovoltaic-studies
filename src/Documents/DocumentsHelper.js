@@ -9,67 +9,78 @@
  * @param {boolean} templateProps.copyComments - Whether to copy comments and replies from the original template.
  * @param {GoogleAppsScript.Drive.Folder} destinationFolder - Folder object to place the output file in.
  * @param {Object} [delimiters={left:'<', right:'>'}] - Delimiters used for identifying substitution tokens.
- * @param {Function} [customHandlerFn=null] - Optional handler for special template-specific processing.
+ * @param {Function} [customHandlerFunction=null] - Optional handler for special template-specific processing.
  * @returns {GoogleAppsScript.Drive.File} The created file.
  */
-function createDocumentFromTemplate(templateProps, destinationFolder, delimiters = { left: '<', right: '>' }, customHandlerFn = null) {
-  const {
-    filename,
-    templateId,
-    exportToPDF,
-    copyComments
-  } = templateProps;
+function createDocumentFromTemplate(
+  templateProps,
+  destinationFolder,
+  delimiters = { left: "<", right: ">" },
+  customHandlerFunction = null
+) {
+  // MIME type constants for clarity and maintainability.
+  const MIME_TYPE_GOOGLE_DOC = "application/vnd.google-apps.document"
+  const MIME_TYPE_GOOGLE_SHEET = "application/vnd.google-apps.spreadsheet"
+  const MIME_TYPE_PDF = "application/pdf"
 
-  Tools.deleteFile(filename, destinationFolder);
+  const SIGNATURE_NAMED_RANGE = "firmaIngeniera"
+  const signatureDelimiters = { left: "{{", right: "}}" }
 
-  const templateFile = DriveApp.getFileById(templateId);
-  const mimeType = templateFile.getMimeType();
-  const copy = templateFile.makeCopy(filename, destinationFolder);
+  const { filename, templateId, exportToPDF, copyComments } = templateProps
 
-  const searchPattern = `${delimiters.left}.*?${delimiters.right}`;
+  Tools.deleteFile(filename, destinationFolder)
 
-  if (mimeType === "application/vnd.google-apps.document") {
-    const doc = DocumentApp.openById(copy.getId());
+  const templateFile = DriveApp.getFileById(templateId)
+  const mimeType = templateFile.getMimeType()
+  const copy = templateFile.makeCopy(filename, destinationFolder)
 
-    replaceSignatureIfPresent(doc, delimiters);
-    replaceTextInDoc(doc, searchPattern, delimiters);
+  const searchPattern = `${delimiters.left}.*?${delimiters.right}`
+  const signaturePattern = `${signatureDelimiters.left}${signatureNamedRange}${signatureDelimiters.right}`
 
-    if (copyComments) copyCommentsAndReplies(copy, templateId);
-    if (typeof customHandlerFn === 'function') customHandlerFn(doc);
+  if (mimeType === MIME_TYPE_GOOGLE_DOC) {
+    const doc = DocumentApp.openById(copy.getId())
 
-    doc.saveAndClose();
+    replaceSignatureIfPresent(doc, signaturePattern, SIGNATURE_NAMED_RANGE)
+    replaceTextInDoc(doc, searchPattern, delimiters)
+
+    if (copyComments) copyCommentsAndReplies(copy, templateId)
+    if (typeof customHandlerFunction === "function") customHandlerFunction(doc)
+
+    doc.saveAndClose()
 
     if (exportToPDF) {
-      const pdfFilename = filename + ".pdf";
-      Tools.deleteFile(pdfFilename, destinationFolder);
-      const pdf = DriveApp.createFile(doc.getAs('application/pdf'));
-      pdf.moveTo(destinationFolder);
-      pdf.setName(pdfFilename);
+      const pdfFilename = filename + ".pdf"
+      Tools.deleteFile(pdfFilename, destinationFolder)
+      const pdf = DriveApp.createFile(doc.getAs(MIME_TYPE_PDF))
+      pdf.moveTo(destinationFolder)
+      pdf.setName(pdfFilename)
     }
+  } else if (mimeType === MIME_TYPE_GOOGLE_SHEET) {
+    const sheet = SpreadsheetApp.openById(copy.getId())
+    replaceTextInSheet(sheet, searchPattern, delimiters)
 
-  } else if (mimeType === "application/vnd.google-apps.spreadsheet") {
-    const sheet = SpreadsheetApp.openById(copy.getId());
-    replaceTextInSheet(sheet, searchPattern, delimiters);
-
-    if (copyComments) copyCommentsAndReplies(copy, templateId);
+    if (copyComments) copyCommentsAndReplies(copy, templateId)
   }
 
-  return copy;
+  return copy
 }
 
-
 /**
- * Replaces the signature placeholder in the document with the actual image.
+ * Replaces a placeholder in the document with an image from a named range.
+ *
  * @param {GoogleAppsScript.Document.Document} doc - The document object.
- * @param {Object} delimiters - Left and right delimiters for the token.
+ * @param {string} pattern - The exact placeholder text to search for in the document (e.g., "{{firmaIngeniera}}").
+ * @param {string} signatureNamedRange - The name of the named range containing the signature file ID.
  */
-function replaceSignatureIfPresent(doc, delimiters) {
-  const SIGNATURE_NAMED_RANGE = "firmaIngeniera";
-  const token = `${delimiters.left}${SIGNATURE_NAMED_RANGE}${delimiters.right}`;
-  const body = doc.getBody();
-  if (body.findText(token)) {
-    const signatureBlob = DriveApp.getFileById(get(SIGNATURE_NAMED_RANGE)).getBlob();
-    replaceImage(doc, token, signatureBlob, 300);
+function replaceSignatureIfPresent(doc, pattern, signatureNamedRange) {
+  const SIGNATURE_IMAGE_WIDTH_PX = 300
+  const body = doc.getBody()
+
+  if (body.findText(pattern)) {
+    const signatureBlob = DriveApp.getFileById(
+      get(signatureNamedRange)
+    ).getBlob()
+    replaceImage(doc, pattern, signatureBlob, SIGNATURE_IMAGE_WIDTH_PX)
   }
 }
 
@@ -80,26 +91,27 @@ function replaceSignatureIfPresent(doc, delimiters) {
  * @param {Object} delimiters - Left and right delimiters.
  */
 function replaceTextInDoc(doc, pattern, delimiters) {
-  const parent = doc.getBody().getParent();
+  const parent = doc.getBody().getParent()
 
   for (let i = 0; i < parent.getNumChildren(); i++) {
-    const child = parent.getChild(i);
-    const valuesToReplace = new Set();
-    let range = child.findText(pattern);
+    const child = parent.getChild(i)
+    const valuesToReplace = new Set()
+    let range = child.findText(pattern)
 
     while (range) {
-      const matches = range.getElement().asText().getText().matchAll(pattern);
+      const matches = range.getElement().asText().getText().matchAll(pattern)
       for (const match of matches) {
-        valuesToReplace.add(match[0]);
+        valuesToReplace.add(match[0])
       }
-      range = child.findText(pattern, range);
+      range = child.findText(pattern, range)
     }
 
     for (const token of valuesToReplace) {
-      const name = token.slice(delimiters.left.length, -delimiters.right.length);
-      const namedRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(name);
+      const name = token.slice(delimiters.left.length, -delimiters.right.length)
+      const namedRange =
+        SpreadsheetApp.getActiveSpreadsheet().getRangeByName(name)
       if (namedRange) {
-        child.replaceText(token, namedRange.getDisplayValue());
+        child.replaceText(token, namedRange.getDisplayValue())
       }
     }
   }
@@ -112,21 +124,25 @@ function replaceTextInDoc(doc, pattern, delimiters) {
  * @param {Object} delimiters - Left and right delimiters.
  */
 function replaceTextInSheet(sheet, pattern, delimiters) {
-  const matches = sheet.createTextFinder(pattern).useRegularExpression(true).findAll();
-  const tokens = new Set();
+  const matches = sheet
+    .createTextFinder(pattern)
+    .useRegularExpression(true)
+    .findAll()
+  const tokens = new Set()
 
-  matches.forEach(cell => {
-    const found = cell.getValue().matchAll(pattern);
+  matches.forEach((cell) => {
+    const found = cell.getValue().matchAll(pattern)
     for (const match of found) {
-      tokens.add(match[0]);
+      tokens.add(match[0])
     }
-  });
+  })
 
   for (const token of tokens) {
-    const name = token.slice(delimiters.left.length, -delimiters.right.length);
-    const namedRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(name);
+    const name = token.slice(delimiters.left.length, -delimiters.right.length)
+    const namedRange =
+      SpreadsheetApp.getActiveSpreadsheet().getRangeByName(name)
     if (namedRange) {
-      sheet.createTextFinder(token).replaceAllWith(get(name));
+      sheet.createTextFinder(token).replaceAllWith(get(name))
     }
   }
 }
@@ -137,14 +153,16 @@ function replaceTextInSheet(sheet, pattern, delimiters) {
  * @param {string} templateId - ID of the source template.
  */
 function copyCommentsAndReplies(copy, templateId) {
-  const newDocId = copy.getId();
-  const comments = Drive.Comments.list(templateId, { maxResults: 100 });
+  const newDocId = copy.getId()
+  const comments = Drive.Comments.list(templateId, { maxResults: 100 })
 
-  comments.items.forEach(item => {
-    const replies = item.replies || [];
-    delete item.replies;
+  comments.items.forEach((item) => {
+    const replies = item.replies || []
+    delete item.replies
 
-    const inserted = Drive.Comments.insert(item, newDocId);
-    replies.forEach(reply => Drive.Replies.insert(reply, newDocId, inserted.commentId));
-  });
+    const inserted = Drive.Comments.insert(item, newDocId)
+    replies.forEach((reply) =>
+      Drive.Replies.insert(reply, newDocId, inserted.commentId)
+    )
+  })
 }
