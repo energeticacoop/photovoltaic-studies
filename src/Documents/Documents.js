@@ -140,7 +140,7 @@ function createDocuments(outputNamedRange) {
       "1Z99ZLph56eCyNmbsGeqXk9CmcIHGXgEYOspGgAxxs3M": createCELstudy
     };
 
-    const customHandlerFn = templateHandlers[template.templateId] || null;
+    const customHandlerFn = templateHandlers[template.templateId] || null
 
     // Create document and replace values
     const destinationFolder = getDestinationFolder(template.folder)
