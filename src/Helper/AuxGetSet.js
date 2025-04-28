@@ -1,4 +1,3 @@
-
 /**
  * Retrieves and validates a range's value(s) from the active spreadsheet.
  *
@@ -9,34 +8,33 @@
  * @throws {Error} If the range doesn't exist, the schema is missing, or validation fails.
  */
 function get(rangeName) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet();
-  const range = sheet.getRangeByName(rangeName);
+  const sheet = SpreadsheetApp.getActiveSpreadsheet()
+  const range = sheet.getRangeByName(rangeName)
 
   if (!range) {
-    throw new Error(`⚠️ El rango con nombre "${rangeName}" no existe.`);
+    throw new Error(`⚠️ El rango con nombre "${rangeName}" no existe.`)
   }
 
-  const validator = RangeSchemas[rangeName];
-  const rawValues = range.getValues();
+  const validator = RangeSchemas[rangeName]
+  const rawValues = range.getValues()
 
   if (!validator) {
     return rawValues
   }
 
   try {
-    const result = validator(rawValues);
-    return result;
+    const result = validator(rawValues)
+    return result
   } catch (e) {
-    throw new Error(`❌ Error al validar el rango "${rangeName}": ${e.message}`);
+    throw new Error(`❌ Error al validar el rango "${rangeName}": ${e.message}`)
   }
 }
-
 
 /**
  * Sets values in a named range in Google Sheets.
  * It handles single values, multiple values (matrix), and single column values.
  * It also performs error checking to ensure the shape of the data matches the shape of the range.
- * 
+ *
  * @param {string} name - The name of the range to set the values in.
  * @param {any|Array<any>|Array<Array<any>>} values - The value(s) to set:
  *    - A single value for a single cell.
@@ -48,12 +46,12 @@ function set(name, values) {
 
   // If the values are a single value, wrap it in an array to treat it as a single cell
   if (!Array.isArray(values)) {
-    values = [[values]]  // Wrap single value in an array to set it as a single cell
+    values = [[values]] // Wrap single value in an array to set it as a single cell
   }
-  
+
   // If it's an array but not a 2D array, it’s a single column (1D array)
   if (Array.isArray(values) && !Array.isArray(values[0])) {
-    values = values.map(value => [value])  // Convert 1D array to 2D array
+    values = values.map((value) => [value]) // Convert 1D array to 2D array
   }
 
   // Check if the shape of values matches the shape of the range
@@ -63,7 +61,9 @@ function set(name, values) {
   const valuesNumCols = values[0].length
 
   if (valuesNumRows !== numRows || valuesNumCols !== numCols) {
-    throw new Error(`Error: Mismatched dimensions. The range "${name}" expects a ${numRows}x${numCols} array, but the provided data is ${valuesNumRows}x${valuesNumCols}.`)
+    throw new Error(
+      `Error: Mismatched dimensions. The range "${name}" expects a ${numRows}x${numCols} array, but the provided data is ${valuesNumRows}x${valuesNumCols}.`
+    )
   }
 
   // Set the values in the range
@@ -88,9 +88,6 @@ function setURL(rangeName, url, text) {
 
   range.setRichTextValue(richValue)
 }
-
-
-
 
 /**
  * Clears the content of a named range in a Google Sheets spreadsheet.
@@ -122,28 +119,30 @@ function createTemplatesArray(outputNamedRange) {
 
   // Get the headers from the first row (index 0) to use as object keys
   const headers = templatesData[0]
-  
+
   // Initialize an empty array to hold the template objects
   const templatesArray = []
 
   // Loop through each row of template data (starting from the second row)
   for (let i = 1; i < templatesData.length; i++) {
     const row = templatesData[i]
-    
+
     // Create an object for each template row
     let templateObj = {}
-    
+
     // Loop through each header to assign values from the row to the object
     for (let j = 0; j < headers.length; j++) {
       templateObj[headers[j]] = row[j]
     }
-    
+
     // Add the template object to the array
     templatesArray.push(templateObj)
   }
-  
+
   // Filter the templates based on the outputNamedRange
-  const filteredTemplates = templatesArray.filter(template => template.outputNamedRange === outputNamedRange)
+  const filteredTemplates = templatesArray.filter(
+    (template) => template.outputNamedRange === outputNamedRange
+  )
 
   // Return the filtered array of template objects
   return filteredTemplates
