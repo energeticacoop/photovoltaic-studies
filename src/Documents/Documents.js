@@ -25,11 +25,17 @@ function create01FolderDocumentation() {
 function createMemoryOrProjectAndGuide() {
   const label = get("withProjectLabel")
   if (get("withproject")) {
-    Tools.showMessage("Generación de documentación", `La casilla "${label}" de la pestaña "Documentación" está marcada. Se generará proyecto de instalación.`)
+    Tools.showMessage(
+      "Generación de documentación",
+      `La casilla "${label}" de la pestaña "Documentación" está marcada. Se generará proyecto de instalación.`
+    )
     createDocuments("outputProject")
   } else {
-    Tools.showMessage("Generación de documentación", `La casilla "${label}" de la pestaña "Documentación" no está marcada. Se generará memoria técnica de instalación.`)
-    createDocuments("outputMemory")    
+    Tools.showMessage(
+      "Generación de documentación",
+      `La casilla "${label}" de la pestaña "Documentación" no está marcada. Se generará memoria técnica de instalación.`
+    )
+    createDocuments("outputMemory")
   }
 
   createDocuments("outputGuide")
@@ -58,7 +64,12 @@ function create04FolderDocumentation() {
     createDocuments("output04Folder")
   } else {
     const label = get("withProjectLabel")
-    Tools.showMessage("Generación de documentación", SpreadsheetApp.getUi().alert(`La casilla "${label}" de la pestaña "Documentación" no está marcada. No se generará ningún documento.`))
+    Tools.showMessage(
+      "Generación de documentación",
+      SpreadsheetApp.getUi().alert(
+        `La casilla "${label}" de la pestaña "Documentación" no está marcada. No se generará ningún documento.`
+      )
+    )
   }
 }
 
@@ -83,7 +94,6 @@ function createAllDocuments() {
   create05FolderDocumentation()
 }
 
-
 /**
  * Creates the documentation for shared installations
  */
@@ -105,7 +115,6 @@ function createSavingsSharedStudy() {
   createDocuments("outputSharedSavingsStudy")
 }
 
-
 /**
  * Creates a test document.
  */
@@ -113,13 +122,11 @@ function createTestDocument() {
   createDocuments("test")
 }
 
-
 /**
  * Creates documents from templates.
  * @param {string} outputNamedRange - Name of the output range.
  */
 function createDocuments(outputNamedRange) {
-
   const templates = createTemplatesArray(outputNamedRange)
 
   // Clear output range
@@ -128,32 +135,41 @@ function createDocuments(outputNamedRange) {
 
   // Replace values in all templates
   templates.forEach((template, templateIndex) => {
-
     // Manage additional actions for templates with special type
     const templateHandlers = {
-      "Pem": createPemAdditionalContents,
-      "Bill": createBillAdditionalContents,
-      "FinalStudy": createFinalStudyAdditionalContents,
-      "InstallationGuide": createInstallationGuideAdditionalContents,
-      "CelSavings": createCELwithQuotaAdditionalContents,
-      "CelStudy": createCELstudy,
-      "CelStudy": createCELstudy
-    };
+      Pem: createPemAdditionalContents,
+      Bill: createBillAdditionalContents,
+      FinalStudy: createFinalStudyAdditionalContents,
+      InstallationGuide: createInstallationGuideAdditionalContents,
+      CelSavings: createCELwithQuotaAdditionalContents,
+      CelStudy: createCELstudy,
+      CelStudy: createCELstudy,
+    }
 
     const customHandlerFn = templateHandlers[templates.templateType] || null
 
     // Create document and replace values
     const destinationFolder = getDestinationFolder(template.folder)
-    const delimiters = { left: '<', right: '>' }
-    const copy = createDocumentFromTemplate(template, destinationFolder, delimiters, customHandlerFn)
+    const delimiters = { left: "<", right: ">" }
+    const copy = Tools.createDocumentFromTemplate(
+      template,
+      destinationFolder,
+      delimiters,
+      customHandlerFn
+    )
 
     // Output link to document
     const nextNamedRangeName = "next"
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación")
-    SpreadsheetApp.getActiveSpreadsheet().setNamedRange(nextNamedRangeName, sheet.getRange(outputRange.getRow() + templateIndex, outputRange.getColumn()))
-    setURL(nextNamedRangeName, copy.getUrl(), template.filename
+    const sheet =
+      SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Documentación")
+    SpreadsheetApp.getActiveSpreadsheet().setNamedRange(
+      nextNamedRangeName,
+      sheet.getRange(
+        outputRange.getRow() + templateIndex,
+        outputRange.getColumn()
+      )
     )
+    setURL(nextNamedRangeName, copy.getUrl(), template.filename)
     SpreadsheetApp.flush()
   })
 }
-
