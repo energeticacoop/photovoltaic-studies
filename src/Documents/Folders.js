@@ -4,7 +4,6 @@
  * @returns {Folder} The destination folder.
  */
 function getDestinationFolder(destinationFolderName) {
-
   const folder01 = DriveApp.getFolderById(getParentFolderId())
   const clientFolder = folder01.getParents().next()
   const folder02 = clientFolder.getFoldersByName("02 - Tramitación").next()
@@ -32,4 +31,23 @@ function getDestinationFolder(destinationFolderName) {
     case "folder03":
       return folder03
   }
+}
+
+/**
+ * Retrieves the ID of the parent folder of the active spreadsheet.
+ * @returns {string} The ID of the parent folder.
+ */
+function getParentFolderId() {
+  return DriveApp.getFileById(SpreadsheetApp.getActiveSpreadsheet().getId())
+    .getParents()
+    .next()
+    .getId()
+}
+
+/**
+ * Gets the parent folder object of the active spreadsheet.
+ * @returns {GoogleAppsScript.Drive.Folder} The parent folder as a Folder object.
+ */
+function getParentFolder() {
+  return DriveApp.getFolderById(getParentFolderId())
 }

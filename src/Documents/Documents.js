@@ -143,7 +143,6 @@ function createDocuments(outputNamedRange) {
       InstallationGuide: createInstallationGuideAdditionalContents,
       CelSavings: createCELwithQuotaAdditionalContents,
       CelStudy: createCELstudy,
-      CelStudy: createCELstudy,
     }
 
     const customHandlerFn = templateHandlers[templates.templateType] || null
@@ -172,4 +171,46 @@ function createDocuments(outputNamedRange) {
     setURL(nextNamedRangeName, copy.getUrl(), template.filename)
     SpreadsheetApp.flush()
   })
+}
+
+/**
+ * Creates an array of template objects from the named range "templates"
+ * and filters them based on the provided outputNamedRange.
+ *
+ * @param {string} outputNamedRange - The value to filter templates by
+ * @returns {Array<Object>} Filtered array of template objects matching the outputNamedRange
+ */
+function createTemplatesArray(outputNamedRange) {
+  // Get the named range "templates" that contains the template data
+  const templatesData = get("templates")
+
+  // Get the headers from the first row (index 0) to use as object keys
+  const headers = templatesData[0]
+
+  // Initialize an empty array to hold the template objects
+  const templatesArray = []
+
+  // Loop through each row of template data (starting from the second row)
+  for (let i = 1; i < templatesData.length; i++) {
+    const row = templatesData[i]
+
+    // Create an object for each template row
+    let templateObj = {}
+
+    // Loop through each header to assign values from the row to the object
+    for (let j = 0; j < headers.length; j++) {
+      templateObj[headers[j]] = row[j]
+    }
+
+    // Add the template object to the array
+    templatesArray.push(templateObj)
+  }
+
+  // Filter the templates based on the outputNamedRange
+  const filteredTemplates = templatesArray.filter(
+    (template) => template.outputNamedRange === outputNamedRange
+  )
+
+  // Return the filtered array of template objects
+  return filteredTemplates
 }

@@ -1,18 +1,18 @@
 /**
- * Clears the values of all cells with a specified green background 
- * (#b6d7a8) while preserving any formulas present in those cells. 
- * 
- * This function processes each cell in the first 100 rows of the 
- * active sheet using a declarative style. If a cell has a green 
- * background and does not contain a formula, its value is cleared. 
- * If a cell has a green background but contains a formula, 
- * the formula is preserved. Cells that do not have the specified 
- * background color remain unaffected. 
- * 
+ * Clears the values of all cells with a specified green background
+ * (#b6d7a8) while preserving any formulas present in those cells.
+ *
+ * This function processes each cell in the first 100 rows of the
+ * active sheet using a declarative style. If a cell has a green
+ * background and does not contain a formula, its value is cleared.
+ * If a cell has a green background but contains a formula,
+ * the formula is preserved. Cells that do not have the specified
+ * background color remain unaffected.
+ *
  * Additionally, if the sheet is named "Producción", it will also
  * clear the named range "productionSAM".
- * 
- * Usage: Call this function to clean up data while keeping formulas 
+ *
+ * Usage: Call this function to clean up data while keeping formulas
  * intact for cells with a specific background color.
  */
 function clearGreenCells() {
@@ -27,11 +27,12 @@ function clearGreenCells() {
   const greenHex = "#b6d7a8" // Hex code for the specified green background
 
   // Use nested map functions to create a new values array
-  const newValues = values.map((row, i) => 
-    row.map((cellValue, j) => 
-      (backgrounds[i][j] === greenHex) 
-      ? (formulas[i][j] || "") // Keep formula if it exists, otherwise clear value
-      : (formulas[i][j] || cellValue) // Keep current value if not green or keep formula if it exists
+  const newValues = values.map((row, i) =>
+    row.map(
+      (cellValue, j) =>
+        backgrounds[i][j] === greenHex
+          ? formulas[i][j] || "" // Keep formula if it exists, otherwise clear value
+          : formulas[i][j] || cellValue // Keep current value if not green or keep formula if it exists
     )
   )
 
@@ -47,42 +48,44 @@ function clearGreenCells() {
   }
 }
 
-
-
-
 function clearLoadCurves() {
   const selectedSelfConsumers = get("selectedSelfConsumers")[0]
   selectedSelfConsumers.forEach((isSelected, index) => {
     if (isSelected) {
-
       const selfConsumerIndex = index + 1
       const selfConsumer = new SelfConsumer(selfConsumerIndex)
 
-      Logger.log("Processing load curve for self-consumer #" + selfConsumerIndex)
+      Logger.log(
+        "Processing load curve for self-consumer #" + selfConsumerIndex
+      )
       const headings = ["cchConventional", "cchRecurring", "cchASHP", "cchSAVE"]
-      headings.forEach(heading => {
+      headings.forEach((heading) => {
         selfConsumer.clearLoadCurve(heading)
       })
-
-
     }
   })
-
 }
 
+/**
+ * Clears the content of a named range in a Google Sheets spreadsheet.
+ * @param {string} rangeName - The name of the range to clear.
+ */
+function clearRange(rangeName) {
+  SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName).clearContent()
+}
 
 /**
  * Removes all broken named ranges (those with #REF errors) from the active spreadsheet.
  */
-function removeBrokenNamedRanges(simulate=true) {
+function removeBrokenNamedRanges(simulate = true) {
   // Get the active spreadsheet
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-  
+
   // Get all named ranges in the spreadsheet
   const namedRanges = spreadsheet.getNamedRanges()
-  
+
   // Loop through each named range
-  namedRanges.forEach(namedRange => {
+  namedRanges.forEach((namedRange) => {
     try {
       // Attempt to get the range of the named range
       const name = namedRange.getName()
@@ -91,16 +94,14 @@ function removeBrokenNamedRanges(simulate=true) {
     } catch (e) {
       // If an error occurs, it's likely a #REF issue
       console.log(`Removing broken named range: ${namedRange.getName()}`)
-      
+
       // Remove the broken named range
-      if (!simulate){
+      if (!simulate) {
         namedRange.remove()
       }
     }
   })
 }
-
-
 
 /**
  * Identifies and logs all named ranges that are not used in any formula of the spreadsheet.
@@ -109,27 +110,26 @@ function findUnusedNamedRanges() {
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet()
   const namedRanges = spreadsheet.getNamedRanges()
   const allSheets = spreadsheet.getSheets()
-  
+
   // Gather all formulas in the spreadsheet
-  let allFormulas = ''
-  allSheets.forEach(sheet => {
+  let allFormulas = ""
+  allSheets.forEach((sheet) => {
     const range = sheet.getDataRange()
     const formulas = range.getFormulas().flat() // Get all formulas in the sheet and flatten into a single array
-    allFormulas += formulas.join(' ')
+    allFormulas += formulas.join(" ")
   })
-  
+
   // Check each named range against the collected formulas
-  const unusedNamedRanges = namedRanges.filter(namedRange => {
+  const unusedNamedRanges = namedRanges.filter((namedRange) => {
     const name = namedRange.getName()
     return !allFormulas.includes(name) // Check if the named range is used in any formula
   })
-  
+
   // Log unused named ranges
   if (unusedNamedRanges.length > 0) {
-    console.log('Unused Named Ranges:')
-    unusedNamedRanges.forEach(namedRange => console.log(namedRange.getName()))
+    console.log("Unused Named Ranges:")
+    unusedNamedRanges.forEach((namedRange) => console.log(namedRange.getName()))
   } else {
-    console.log('No unused named ranges found.')
+    console.log("No unused named ranges found.")
   }
 }
-
